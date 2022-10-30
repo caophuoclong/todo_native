@@ -53,6 +53,7 @@ enum Type {
   SET_NO_DONE = 'SET_NO_DONE',
   SET_USER = 'SET_USER',
   SET_TASKS = 'SET_TASKS',
+  SET_EMPTY_TASKS = 'SET_EMPTY_TASKS',
 }
 interface action {
   type: Type;
@@ -60,6 +61,11 @@ interface action {
 }
 const reducer = (state: initialState, action: action) => {
   switch (action.type) {
+    case Type.SET_EMPTY_TASKS:
+      return {
+        ...state,
+        tasks: [],
+      };
     case Type.SET_ACTIVE:
       return {
         ...state,
@@ -185,6 +191,12 @@ export const setTask = (task: Partial<Task>) => {
   return {
     type: Type.SET_TASK,
     payload: task,
+  };
+};
+export const setEmptyTasks = () => {
+  return {
+    type: Type.SET_EMPTY_TASKS,
+    payload: null,
   };
 };
 export const setEmptyTask = () => {

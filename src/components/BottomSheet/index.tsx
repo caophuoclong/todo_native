@@ -27,6 +27,7 @@ import Animated, {
 import useAppContext from '~/hooks/useAppContext';
 import {setEmptyTask} from '../../context/index';
 type BottomSheetProps = {
+  maxHeight?: number;
   children?: React.ReactNode;
 };
 export type BottomSheetPropsRef = {
@@ -35,9 +36,10 @@ export type BottomSheetPropsRef = {
 };
 export const {height: SCREEN_HEIGHT, width: SCREEN_WIDTH} =
   Dimensions.get('window');
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 100;
+const DEFINE_MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 100;
 const BottomSheet = React.forwardRef<BottomSheetPropsRef, BottomSheetProps>(
-  ({children}, ref) => {
+  ({children, maxHeight}, ref) => {
+    const MAX_TRANSLATE_Y = maxHeight || DEFINE_MAX_TRANSLATE_Y;
     const translateY = useSharedValue(0);
     const context = useSharedValue({y: 0});
     const active = useSharedValue(false);
@@ -76,7 +78,6 @@ const BottomSheet = React.forwardRef<BottomSheetPropsRef, BottomSheetProps>(
       })
       .onEnd(event => {
         const value = translateY.value;
-
         if (!isKeyBoardVisible.value) {
           if (value > -SCREEN_HEIGHT / 2) {
             scrollTo(0);
@@ -104,7 +105,7 @@ const BottomSheet = React.forwardRef<BottomSheetPropsRef, BottomSheetProps>(
         'keyboardDidHide',
         () => {
           isKeyBoardVisible.value = false;
-          scrollTo(MAX_TRANSLATE_Y);
+          // scrollTo(MAX_TRANSLATE_Y);
         },
       );
 
@@ -154,12 +155,14 @@ const style = StyleSheet.create({
     top: SCREEN_HEIGHT,
     borderRadius: 25,
     zIndex: 1000,
-    shadowRadius: 2,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -3,
+      height: 12,
     },
-    shadowColor: '#000000',
-    elevation: 8,
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+
+    elevation: 24,
   },
 });

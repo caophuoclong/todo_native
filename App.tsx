@@ -14,13 +14,11 @@ import React, {useEffect, type PropsWithChildren} from 'react';
 import {StatusBar, useColorScheme} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-import Todo from '~/views/Todo';
-import Welcome from '~/views/Welcome';
 import {NavigationParamsList} from './src/interfaces/index';
-import Database from '~/utils/database';
 import Splash from '~/views/Splash';
 import Setting from '~/views/Setting';
 import {ContextProvider} from '~/context';
+import Home from '~/views/Home';
 
 const Stack = createNativeStackNavigator<NavigationParamsList>();
 
@@ -37,8 +35,7 @@ const App = () => {
               headerShown: false,
             }}>
             <Stack.Screen name="Splash" component={Splash} />
-            <Stack.Screen name="Home" component={Welcome} />
-            <Stack.Screen name="Todo" component={Todo} />
+            <Stack.Screen name="Home" component={Home} />
             <Stack.Screen
               name="Setting"
               component={Setting}

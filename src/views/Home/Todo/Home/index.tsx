@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
-import {BottomSheetPropsRef} from '../../../components/BottomSheet/index';
+import {BottomSheetPropsRef} from '../../../../components/BottomSheet/index';
 import Tasks from './Tasks';
 import Completed from './Completed';
 import Greeting from './Greeting';

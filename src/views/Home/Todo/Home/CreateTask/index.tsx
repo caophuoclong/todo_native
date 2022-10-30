@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import BottomSheet from '~/components/BottomSheet';
-import {BottomSheetPropsRef} from '../../../../components/BottomSheet/index';
+import {BottomSheetPropsRef} from '../../../../../components/BottomSheet/index';
 import DatePicker from 'react-native-date-picker';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import {Task, TaskType} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
 import {addTask, setTask} from '~/context';
-import {setEmptyTask} from '../../../../context/index';
+import {setEmptyTask} from '../../../../../context/index';
 import Database from '~/utils/database';
 
 interface Props {}

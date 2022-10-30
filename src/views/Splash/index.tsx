@@ -59,21 +59,17 @@ export default function Splash({navigation}: Props) {
       if (tasks) {
         dispatch(setTasks(JSON.parse(tasks)));
       }
-      setData(data);
-      console.log(data);
+      if (data) {
+        dispatch(setUser(JSON.parse(data) as IUser));
+      }
       SplashScreen.hide();
     })();
   }, []);
   useEffect(() => {
     if (granted) {
-      if (data === undefined || data === 'undefined') {
-        navigation.navigate('Home');
-      } else {
-        dispatch(setUser(JSON.parse(data) as IUser));
-        navigation.navigate('Todo');
-      }
+      navigation.navigate('Home');
     }
-  }, [data, granted]);
+  }, [granted]);
   return (
     <View
       style={{

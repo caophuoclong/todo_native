@@ -5,9 +5,8 @@ export type NavigationParamsList ={
     Setting: undefined,
 }
 export type TabNavigationParamsList = {
-    Home: undefined,
-    Add: undefined,
-    Setting: undefined
+    Home1: undefined,
+
 }
 export type TaskType = {
     title: "important" | "normal" | "unimportant",

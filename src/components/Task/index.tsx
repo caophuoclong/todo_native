@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '../CheckBox';
@@ -7,14 +7,11 @@ import useAppContext from '~/hooks/useAppContext';
 import {setDone} from '~/context';
 import {setNoDone} from '../../context/index';
 
-const Task: React.FC<ITask> = ({
-  title,
-  description,
-  start,
-  end,
-  isDone,
-  _id,
-}) => {
+const Task: React.FC<
+  ITask & {
+    handleTaskPress?: (_id: string) => void;
+  }
+> = ({title, description, start, end, isDone, _id, handleTaskPress}) => {
   const [isChecked, setIsChecked] = useState(isDone || false);
   const {state, dispatch} = useAppContext();
   const handleSetDone = () => {
@@ -25,7 +22,14 @@ const Task: React.FC<ITask> = ({
     }
   };
   return (
-    <View style={style.container}>
+    <TouchableOpacity
+      disabled={handleTaskPress === undefined ? true : false}
+      style={style.container}
+      onPress={() => {
+        if (handleTaskPress) {
+          handleTaskPress(_id);
+        }
+      }}>
       <View
         style={{
           flexDirection: 'row',
@@ -74,7 +78,7 @@ const Task: React.FC<ITask> = ({
         }}>
         <Text numberOfLines={2}>{description}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default Task;

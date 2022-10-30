@@ -13,7 +13,7 @@ import React from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {IUser, NavigationParamsList} from '~/interfaces';
 import Notify from '~/components/Notify';
-import {CommonStyles} from '../../styles/index';
+import {CommonStyles} from '../../../styles/index';
 import {useEffect} from 'react';
 import Database from '~/utils/database';
 import {setUser} from '~/context';
@@ -22,25 +22,18 @@ type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Home'>;
 };
 
-export default function Welcome({navigation}: Props) {
+export default function Welcome() {
   const [name, setName] = React.useState('');
   const {state, dispatch} = useAppContext();
   const [modalVisible, setModalVisible] = React.useState(false);
-  useEffect(() => {
-    (async () => {
-      const data = await Database._retriveData('user');
-      if (data) {
-        navigation.navigate('Todo');
-      }
-    })();
-  }, []);
+
   return (
     <View style={[style.container]}>
       <Image
         style={{
           marginBottom: 50,
         }}
-        source={require('../../assets/images/test1.png')}
+        source={require('../../../assets/images/test1.png')}
       />
       <Text style={style.title}>Welcome to Todo</Text>
       <Text style={style.subTitle}>
@@ -57,12 +50,7 @@ export default function Welcome({navigation}: Props) {
                 name: name,
               };
               await Database._storeData('user', JSON.stringify(user));
-              // dispatch(
-              //   setUser({
-              //     name: name,
-              //   }),
-              // );
-              // navigation.navigate('Todo');
+              dispatch(setUser(user));
             } else {
               setModalVisible(true);
             }
@@ -78,7 +66,7 @@ export default function Welcome({navigation}: Props) {
               name: name,
             };
             await Database._storeData('user', JSON.stringify(user));
-            navigation.navigate('Todo');
+            dispatch(setUser(user));
           } else {
             setModalVisible(true);
           }
