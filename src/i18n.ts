@@ -41,7 +41,7 @@ const resources = {
     },
     vi: {
         translation:{
-            WelcomeTo: "Chào mừng",
+            WelcomeTo: "Chào mừng đến",
             EnterYourName: "Nhập tên của bạn",
             GetStarted: "Bắt đầu",
             Hello: "Xin chào",

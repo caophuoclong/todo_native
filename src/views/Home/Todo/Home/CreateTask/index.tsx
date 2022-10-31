@@ -5,7 +5,6 @@ import {
   Pressable,
   Switch,
   TextInput,
-  ScrollView,
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
@@ -21,6 +20,7 @@ import useAppContext from '~/hooks/useAppContext';
 import Database from '~/utils/database';
 import {addTask, setEmptyTask, setTask} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface Props {}
 const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
@@ -49,6 +49,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     },
   ];
   const handleCancel = () => {
+    Keyboard.dismiss();
     if (ref) {
       // @ts-ignore
       ref.current.scrollTo(0);
@@ -112,6 +113,10 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     dispatch(setEmptyTask());
     // Hide keyboard
     Keyboard.dismiss();
+    if (ref) {
+      // @ts-ignore
+      ref.current.scrollTo(0);
+    }
   };
   useEffect(() => {
     (async () => {
@@ -125,7 +130,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         style={{
           textAlign: 'center',
           fontSize: 30,
-          marginVertical: 10,
+          marginVertical: 5,
           fontWeight: 'bold',
         }}>
         {t('CreateTask')}
@@ -145,7 +150,10 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       </View>
       <View style={style.box}>
         <Text style={style.title}>{t('TaskLevel')}</Text>
-        <ScrollView horizontal={true} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          showsVerticalScrollIndicator={false}>
           {taskType.map((item, index) => (
             <TouchableOpacity
               key={index}
@@ -186,6 +194,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           <Pressable
             style={{
               marginHorizontal: 10,
+              flex: 0.5,
             }}
             onPress={() => setOpenDatePickerStart(true)}>
             {state.task.start.date.length > 0 ? (
@@ -207,6 +216,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           <Pressable
             style={{
               marginHorizontal: 10,
+              flex: 0.5,
             }}
             onPress={() => setOpenTimePickerStart(true)}>
             {state.task.start.time.length > 0 ? (
@@ -238,6 +248,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           <Pressable
             style={{
               marginHorizontal: 10,
+              flex: 0.5,
             }}
             onPress={() => setOpenDatePickerEnd(true)}>
             {state.task.end.date.length > 0 ? (
@@ -261,6 +272,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           <Pressable
             style={{
               marginHorizontal: 10,
+              flex: 0.5,
             }}
             onPress={() => setOpenTimePickerEnd(true)}>
             {state.task.end.time.length > 0 ? (
@@ -507,9 +519,9 @@ const style = StyleSheet.create({
   },
   btn: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: 10,
     borderRadius: 10,
-    marginTop: 30,
+    marginTop: 10,
     marginHorizontal: 10,
   },
   btnSubmit: {
