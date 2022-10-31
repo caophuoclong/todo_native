@@ -17,12 +17,14 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import {Task, TaskType} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
-import {addTask, setTask} from '~/context';
-import {setEmptyTask} from '../../../../../context/index';
+
 import Database from '~/utils/database';
+import {addTask, setEmptyTask, setTask} from '~/context/actions';
+import {useTranslation} from 'react-i18next';
 
 interface Props {}
 const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
+  const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
   const [openTimePickerStart, setOpenTimePickerStart] =
     useState<boolean>(false);
@@ -46,6 +48,12 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       name: 'Unimportant',
     },
   ];
+  const handleCancel = () => {
+    if (ref) {
+      // @ts-ignore
+      ref.current.scrollTo(0);
+    }
+  };
   const selected = state.task.type;
   const [isEnable, setIsEnable] = useState(state.task.isAlert);
   const [inputDesHeight, setInputDesHeight] = useState(0);
@@ -120,14 +128,14 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           marginVertical: 10,
           fontWeight: 'bold',
         }}>
-        Create Task
+        {t('CreateTask')}
       </Text>
 
       <View style={style.box}>
-        <Text style={style.title}>Task Title</Text>
+        <Text style={style.title}>{t('TaskTitle')}</Text>
         <TextInput
           style={style.inpTaskTitle}
-          placeholder="Task title"
+          placeholder={t('TaskTitlePlaceholder')}
           placeholderTextColor={'#E1E0E5'}
           value={state.task.title}
           onChangeText={text => {
@@ -136,7 +144,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         />
       </View>
       <View style={style.box}>
-        <Text style={style.title}>Task Type</Text>
+        <Text style={style.title}>{t('TaskLevel')}</Text>
         <ScrollView horizontal={true} showsVerticalScrollIndicator={false}>
           {taskType.map((item, index) => (
             <TouchableOpacity
@@ -145,13 +153,13 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
                 style.taskType,
                 selected.title === item.title &&
                   ((selected.title === 'important' && {
-                    backgroundColor: 'red',
+                    backgroundColor: '#FF0000',
                   }) ||
                     (selected.title === 'normal' && {
-                      backgroundColor: 'orange',
+                      backgroundColor: '#00BFFF',
                     }) ||
                     (selected.title === 'unimportant' && {
-                      backgroundColor: 'blue',
+                      backgroundColor: '#008000',
                     })),
               ]}
               onPress={() => {
@@ -162,14 +170,14 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
                   style.text,
                   selected.title === item.title && {color: '#fff'},
                 ]}>
-                {item.name}
+                {t(item.name)}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
       <View style={style.box}>
-        <Text style={style.title}>Choose date & time start</Text>
+        <Text style={style.title}>{t('Choose_DateTimeStart')}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -190,7 +198,9 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             ) : (
               <View style={style.btnIcon}>
                 <AntIcon name="calendar" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>Select Date</Text>
+                <Text style={[style.text, {marginLeft: 10}]}>
+                  {t('SelectDate')}
+                </Text>
               </View>
             )}
           </Pressable>
@@ -210,14 +220,16 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             ) : (
               <View style={style.btnIcon}>
                 <AntIcon name="clockcircleo" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>Select time</Text>
+                <Text style={[style.text, {marginLeft: 10}]}>
+                  {t('SelectTime')}
+                </Text>
               </View>
             )}
           </Pressable>
         </View>
       </View>
       <View style={style.box}>
-        <Text style={style.title}>Choose date & time end</Text>
+        <Text style={style.title}>{t('Choose_DateTimeEnd')}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -239,7 +251,10 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             ) : (
               <View style={style.btnIcon}>
                 <AntIcon name="calendar" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>Select time</Text>
+                <Text style={[style.text, {marginLeft: 10}]}>
+                  {' '}
+                  {t('SelectDate')}
+                </Text>
               </View>
             )}
           </Pressable>
@@ -259,14 +274,19 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             ) : (
               <View style={style.btnIcon}>
                 <AntIcon name="clockcircleo" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>Select time</Text>
+                <Text style={[style.text, {marginLeft: 10}]}>
+                  {' '}
+                  {t('SelectTime')}
+                </Text>
               </View>
             )}
           </Pressable>
         </View>
       </View>
       <View>
-        <Text style={style.title}>Description (optional)</Text>
+        <Text style={style.title}>
+          {t('Description')} ({t('Optional')})
+        </Text>
         <TextInput
           value={state.task.description}
           onContentSizeChange={e => {
@@ -295,7 +315,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               height: Math.max(40, Math.min(100, inputDesHeight)),
             },
           ]}
-          placeholder="Enter description"
+          placeholder={t('EnterDescription')}
           multiline={true}
           scrollEnabled={true}
           returnKeyType="done"
@@ -314,7 +334,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             fontWeight: 'bold',
             color: 'black',
           }}>
-          Get alert for this task
+          {t('GetAlert')}
         </Text>
         <Switch
           trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -324,27 +344,52 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           value={state.task.isAlert}
         />
       </View>
-
-      <Pressable
-        disabled={
-          !state.task.title.length ||
-          !state.task.start.date.length ||
-          !state.task.start.time.length ||
-          !state.task.end.date.length ||
-          !state.task.end.time.length
-        }
-        style={style.btnSubmit}
-        onPress={handleSubmit}>
-        <Text
-          style={{
-            color: '#fff',
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}>
-          Done
-        </Text>
-      </Pressable>
+      <View
+        style={{
+          flexDirection: 'row',
+        }}>
+        <TouchableOpacity
+          style={[
+            style.btn,
+            {
+              backgroundColor: '#fff',
+              borderWidth: 1,
+              // Secondary color
+              borderColor: '#FC94A0',
+            },
+          ]}
+          onPress={handleCancel}>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 20,
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}>
+            {t('Cancel')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          disabled={
+            !state.task.title.length ||
+            !state.task.start.date.length ||
+            !state.task.start.time.length ||
+            !state.task.end.date.length ||
+            !state.task.end.time.length
+          }
+          style={[style.btn, style.btnSubmit]}
+          onPress={handleSubmit}>
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 20,
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}>
+            {t('Done')}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <DatePicker
         mode="date"
         modal
@@ -460,11 +505,15 @@ const style = StyleSheet.create({
   filterSelected: {
     backgroundColor: PRIMARY_COLOR,
   },
-  btnSubmit: {
-    backgroundColor: SECONDARY_COLOR,
+  btn: {
+    flex: 1,
     paddingVertical: 20,
     borderRadius: 10,
     marginTop: 30,
+    marginHorizontal: 10,
+  },
+  btnSubmit: {
+    backgroundColor: SECONDARY_COLOR,
   },
   btnIcon: {
     flexDirection: 'row',

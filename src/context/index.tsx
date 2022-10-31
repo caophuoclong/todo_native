@@ -1,6 +1,6 @@
 import React, {useReducer} from 'react';
 import Database from '~/utils/database';
-import {IUser, Task} from '../interfaces';
+import {IUser, Language, Task} from '../interfaces';
 import {TaskType} from '../interfaces/index';
 
 type Props = {
@@ -14,8 +14,10 @@ interface initialState {
   tasksFiltered: Array<Task>;
   taskCompleted: Array<Task>;
   user: IUser;
+  lan: Language;
 }
 const initialValue: initialState = {
+  lan: 'vi',
   active: false,
   user: {
     name: '',
@@ -43,7 +45,7 @@ const initialValue: initialState = {
   tasksFiltered: [],
   taskCompleted: [],
 };
-enum Type {
+export enum Type {
   SET_ACTIVE = 'SET_ACTIVE',
   SET_TASK = 'SET_TASK',
   ADD_TASK = 'ADD_TASK',
@@ -54,13 +56,52 @@ enum Type {
   SET_USER = 'SET_USER',
   SET_TASKS = 'SET_TASKS',
   SET_EMPTY_TASKS = 'SET_EMPTY_TASKS',
+  CLEAR_DATA = 'CLEAR_DATA',
+  SET_LAN = 'SET_LAN',
 }
+
 interface action {
   type: Type;
   payload: any;
 }
+export const emptyState: initialState = {
+  lan: 'vi',
+  active: false,
+  user: {
+    name: '',
+  },
+  task: {
+    _id: '',
+    title: '',
+    description: '',
+    start: {
+      date: '',
+      time: '',
+    },
+    end: {
+      date: '',
+      time: '',
+    },
+    isDone: false,
+    isAlert: true,
+    type: {
+      title: 'important',
+      name: 'Important',
+    },
+  },
+  tasks: [],
+  tasksFiltered: [],
+  taskCompleted: [],
+};
 const reducer = (state: initialState, action: action) => {
   switch (action.type) {
+    case Type.SET_LAN:
+      return {
+        ...state,
+        lan: action.payload,
+      };
+    case Type.CLEAR_DATA:
+      return emptyState;
     case Type.SET_EMPTY_TASKS:
       return {
         ...state,
@@ -145,89 +186,6 @@ export const AppContext = React.createContext<{
   state: initialValue,
   dispatch: () => {},
 });
-export const setTasks = (tasks: Array<Task>) => {
-  return {
-    type: Type.SET_TASKS,
-    payload: tasks,
-  };
-};
-export const setNoDone = (_id: string) => {
-  return {
-    type: Type.SET_NO_DONE,
-    payload: _id,
-  };
-};
-export const setDone = (_id: string) => {
-  return {
-    type: Type.SET_DONE,
-    payload: _id,
-  };
-};
-export const setTaskFilter = (tasks: Array<Task>) => {
-  return {
-    type: Type.SET_TASK_FILTER,
-    payload: tasks,
-  };
-};
-export const setTaskCompleted = (tasks: Array<Task>) => {
-  return {
-    type: Type.SET_TASK_COMPLETED,
-    payload: tasks,
-  };
-};
-export const addTask = () => {
-  return {
-    type: Type.ADD_TASK,
-    payload: null,
-  };
-};
-export const setUser = (user: Partial<IUser>) => {
-  return {
-    type: Type.SET_USER,
-    payload: user,
-  };
-};
-export const setTask = (task: Partial<Task>) => {
-  return {
-    type: Type.SET_TASK,
-    payload: task,
-  };
-};
-export const setEmptyTasks = () => {
-  return {
-    type: Type.SET_EMPTY_TASKS,
-    payload: null,
-  };
-};
-export const setEmptyTask = () => {
-  return {
-    type: Type.SET_TASK,
-    payload: {
-      title: '',
-      description: '',
-      start: {
-        date: '',
-        time: '',
-      },
-      end: {
-        date: '',
-        time: '',
-      },
-      isDone: false,
-      isAlert: true,
-      type: {
-        title: 'important',
-        name: 'Important',
-      },
-    },
-  };
-};
-export const setActive = (value: boolean) => {
-  return {
-    type: Type.SET_ACTIVE,
-    payload: value,
-  };
-};
 
 export const ContextProvider: React.FC<Props> = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialValue);

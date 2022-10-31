@@ -6,6 +6,7 @@ import Welcome from './Welcome';
 
 const Home = () => {
   const {state, dispatch} = useAppContext();
+
   if (state.user.name) {
     return <Todo />;
   } else {

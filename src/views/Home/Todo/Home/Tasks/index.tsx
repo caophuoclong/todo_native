@@ -6,8 +6,10 @@ import BottomSheet from '~/components/BottomSheet';
 import {BottomSheetPropsRef} from '../../../../../components/BottomSheet/index';
 import {Task as TaskType} from '~/interfaces';
 import DetailTask from '~/components/DetailTask';
+import {useTranslation} from 'react-i18next';
 
 export default function Tasks() {
+  const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
   const {tasksFiltered} = state;
   const ref = React.useRef<BottomSheetPropsRef>(null);
@@ -30,12 +32,12 @@ export default function Tasks() {
     },
     [state.tasks, selectedTask],
   );
+
   return (
     <View style={[tasksFiltered.length > 0 ? {flex: 5} : {flex: 0}]}>
       <View
         style={{
           paddingHorizontal: 10,
-          flex: 1,
         }}>
         <Text
           style={{
@@ -43,7 +45,7 @@ export default function Tasks() {
             fontWeight: 'bold',
             color: '#221B3D',
           }}>
-          Tasks
+          {t('Tasks')}
         </Text>
         <ScrollView>
           {tasksFiltered.map((task, i) => (

@@ -12,11 +12,14 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import {ScrollView} from 'react-native-gesture-handler';
 import {TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
+import AppModal from '../AppModal';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
   task: Task | null;
 }
 const DetailTask: React.FC<Props> = ({task}) => {
+  const {t} = useTranslation();
   const [showModal, setShowModal] = useState(false);
   if (task) {
     return (
@@ -50,7 +53,7 @@ const DetailTask: React.FC<Props> = ({task}) => {
               color: '#fff',
               fontWeight: 'bold',
             }}>
-            {task.type.name}
+            {t(task.type.name)}
           </Text>
         </View>
         {/* Time */}
@@ -66,7 +69,7 @@ const DetailTask: React.FC<Props> = ({task}) => {
                 fontSize: 12,
                 color: '#221B3D',
               }}>
-              Start
+              {t('Start')}
             </Text>
             <View
               style={{
@@ -93,7 +96,7 @@ const DetailTask: React.FC<Props> = ({task}) => {
                 fontSize: 12,
                 color: '#221B3D',
               }}>
-              End
+              {t('End')}
             </Text>
             <View
               style={{
@@ -122,7 +125,7 @@ const DetailTask: React.FC<Props> = ({task}) => {
               fontSize: 12,
               color: '#221B3D',
             }}>
-            Description
+            {t('Description')}
           </Text>
           <TouchableOpacity
             onPress={() => {
@@ -132,52 +135,28 @@ const DetailTask: React.FC<Props> = ({task}) => {
           </TouchableOpacity>
         </View>
         {/* Modal */}
-        <Modal
-          testID={'modal'}
+        <AppModal
           isVisible={showModal}
-          animationInTiming={1000}
-          animationOutTiming={1000}
-          backdropTransitionInTiming={800}
-          backdropTransitionOutTiming={800}
-          onBackdropPress={() => {
+          onClose={() => {
             setShowModal(false);
           }}
-          onBackButtonPress={() => {
-            setShowModal(false);
-          }}>
-          <View
+          title={t('Description')}>
+          <ScrollView>
+            <Text>{task.description}</Text>
+          </ScrollView>
+          <TouchableOpacity
+            onPress={() => setShowModal(false)}
             style={{
-              backgroundColor: 'white',
-              padding: 22,
-              //   alignItems: 'center',
-              borderRadius: 4,
-              borderColor: 'rgba(0, 0, 0, 0.1)',
+              marginTop: 10,
+              backgroundColor: '#00BFFF',
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 5,
+              alignSelf: 'center',
             }}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: '#221B3D',
-              }}>
-              Description
-            </Text>
-            <ScrollView>
-              <Text>{task.description}</Text>
-            </ScrollView>
-            <TouchableOpacity
-              onPress={() => setShowModal(false)}
-              style={{
-                marginTop: 10,
-                backgroundColor: '#00BFFF',
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 5,
-                alignSelf: 'center',
-              }}>
-              <Text style={{color: 'white'}}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
+            <Text style={{color: 'white'}}>{t('Close')}</Text>
+          </TouchableOpacity>
+        </AppModal>
         {/* Notify */}
       </View>
     );

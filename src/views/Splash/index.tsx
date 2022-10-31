@@ -5,14 +5,17 @@ import {
   PermissionStatus,
   Button,
   Alert,
+  Platform,
+  NativeModules,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Database from '~/utils/database';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {IUser, NavigationParamsList} from '~/interfaces';
 import SplashScreen from 'react-native-splash-screen';
-import {setTasks, setUser} from '~/context';
 import useAppContext from '~/hooks/useAppContext';
+import {setLan, setTasks, setUser} from '~/context/actions';
+import i18n from '~/i18n';
 type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Splash'>;
 };
@@ -54,13 +57,30 @@ export default function Splash({navigation}: Props) {
   }, []);
   useEffect(() => {
     (async () => {
+      let locale;
+      if (Platform.OS === 'android') {
+        // get locale from device
+        locale = NativeModules.I18nManager.localeIdentifier;
+      } else {
+        // get locale from device
+        locale = NativeModules.SettingsManager.settings.AppleLocale;
+      }
       const data = await Database._retriveData('user');
       const tasks = await Database._retriveData('tasks');
+      const lan =
+        (await Database._retriveData('lan')) ||
+        (locale === 'en_US' && 'en') ||
+        (locale === 'vi_VN' && 'vi') ||
+        'en';
       if (tasks) {
         dispatch(setTasks(JSON.parse(tasks)));
       }
       if (data) {
         dispatch(setUser(JSON.parse(data) as IUser));
+      }
+      if (lan) {
+        dispatch(setLan(lan));
+        i18n.changeLanguage(lan);
       }
       SplashScreen.hide();
     })();

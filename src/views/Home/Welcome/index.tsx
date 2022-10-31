@@ -16,8 +16,9 @@ import Notify from '~/components/Notify';
 import {CommonStyles} from '../../../styles/index';
 import {useEffect} from 'react';
 import Database from '~/utils/database';
-import {setUser} from '~/context';
 import useAppContext from '~/hooks/useAppContext';
+import {setUser} from '~/context/actions';
+import {useTranslation} from 'react-i18next';
 type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Home'>;
 };
@@ -26,6 +27,7 @@ export default function Welcome() {
   const [name, setName] = React.useState('');
   const {state, dispatch} = useAppContext();
   const [modalVisible, setModalVisible] = React.useState(false);
+  const {t} = useTranslation();
 
   return (
     <View style={[style.container]}>
@@ -35,7 +37,7 @@ export default function Welcome() {
         }}
         source={require('../../../assets/images/test1.png')}
       />
-      <Text style={style.title}>Welcome to Todo</Text>
+      <Text style={style.title}>{t('WelcomeTo')} Todo</Text>
       <Text style={style.subTitle}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet.
       </Text>
@@ -56,7 +58,7 @@ export default function Welcome() {
             }
           }
         }}
-        placeholder="Enter your name here"
+        placeholder={t('EnterYourName')}
       />
       <Pressable
         style={style.button}
@@ -76,7 +78,7 @@ export default function Welcome() {
             fontSize: 30,
             color: 'white',
           }}>
-          Get started
+          {t('GetStarted')}
         </Text>
       </Pressable>
       <Notify

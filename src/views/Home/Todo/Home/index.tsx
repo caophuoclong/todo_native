@@ -17,10 +17,11 @@ import Greeting from './Greeting';
 import {TouchableOpacity} from 'react-native';
 import CreateTask from './CreateTask';
 import useAppContext from '~/hooks/useAppContext';
-import {setTaskCompleted, setTaskFilter} from '~/context';
 import moment from 'moment';
 import {Task} from '~/interfaces';
 import Database from '~/utils/database';
+import {setTaskCompleted, setTaskFilter} from '~/context/actions';
+import {useTranslation} from 'react-i18next';
 interface Props {
   // showBottomSheet: boolean;
   // setShowBottomSheet: () => void;
@@ -30,6 +31,7 @@ interface Props {
 type TitleFilter = 'myDay' | 'important' | 'planned' | 'all';
 const Home = React.forwardRef<BottomSheetPropsRef, Props>(
   ({navigation}, ref) => {
+    const {t} = useTranslation();
     const [filterSelected, setFilterSelected] = useState<TitleFilter>('myDay');
     const {state, dispatch} = useAppContext();
     const [tasksFiltered, setTasksFiltered] = useState<Array<Task>>([]);
@@ -41,7 +43,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
     >([
       {
         title: 'myDay',
-        description: 'My Day',
+        description: 'MyDay',
       },
       {
         title: 'important',
@@ -120,7 +122,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
                       fontWeight: 'bold',
                     },
                   ]}>
-                  {f.description}
+                  {t(f.description)}
                 </Text>
               </TouchableOpacity>
             ))}

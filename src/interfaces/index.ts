@@ -1,3 +1,4 @@
+export type Language = "en" | "vi"
 export type NavigationParamsList ={
     Home: undefined,
     Todo: undefined,

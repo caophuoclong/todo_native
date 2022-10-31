@@ -4,15 +4,13 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '../CheckBox';
 import {Task as ITask} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
-import {setDone} from '~/context';
-import {setNoDone} from '../../context/index';
+import {setDone, setNoDone} from '~/context/actions';
 
 const Task: React.FC<
   ITask & {
     handleTaskPress?: (_id: string) => void;
   }
 > = ({title, description, start, end, isDone, _id, handleTaskPress}) => {
-  const [isChecked, setIsChecked] = useState(isDone || false);
   const {state, dispatch} = useAppContext();
   const handleSetDone = () => {
     if (isDone) {
@@ -37,7 +35,16 @@ const Task: React.FC<
           justifyContent: 'space-between',
         }}>
         <View>
-          <Text style={style.title}>{title}</Text>
+          <Text
+            style={[
+              style.title,
+              isDone && {
+                textDecorationLine: 'line-through',
+                textDecorationStyle: 'solid',
+              },
+            ]}>
+            {title}
+          </Text>
           <View style={style.time}>
             <MaterialIcon
               name="alarm"

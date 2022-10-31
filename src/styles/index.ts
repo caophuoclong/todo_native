@@ -18,6 +18,24 @@ export const CommonStyles = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
-    fontStyle:"italic"
+    fontStyle: 'italic',
   },
+  settingButton: {
+    padding: 10,
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    //   color with gray sweet
+    borderColor: '#e0e0e0',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderWidth: 1,
+    marginVertical: 5
+  },
+  settingTitle:{
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 10
+  }
 });

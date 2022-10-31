@@ -25,7 +25,6 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import useAppContext from '~/hooks/useAppContext';
-import {setEmptyTask} from '../../context/index';
 type BottomSheetProps = {
   maxHeight?: number;
   children?: React.ReactNode;
@@ -79,7 +78,7 @@ const BottomSheet = React.forwardRef<BottomSheetPropsRef, BottomSheetProps>(
       .onEnd(event => {
         const value = translateY.value;
         if (!isKeyBoardVisible.value) {
-          if (value > -SCREEN_HEIGHT / 2) {
+          if (value > -SCREEN_HEIGHT / 1.5) {
             scrollTo(0);
           } else if (value < -SCREEN_HEIGHT / 1.2) {
             scrollTo(MAX_TRANSLATE_Y);

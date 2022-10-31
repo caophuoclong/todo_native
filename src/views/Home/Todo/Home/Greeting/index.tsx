@@ -1,8 +1,10 @@
 import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import useAppContext from '~/hooks/useAppContext';
+import {useTranslation} from 'react-i18next';
 
 export default function Greeting() {
+  const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
   return (
     <View
@@ -20,7 +22,7 @@ export default function Greeting() {
             fontSize: 20,
             color: '#918F9B',
           }}>
-          Hello,
+          {t('Hello')},
         </Text>
         <Text
           style={{
