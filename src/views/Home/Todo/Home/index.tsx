@@ -7,8 +7,10 @@ import {
   Pressable,
   Switch,
   Image,
+  Button,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
+import BackgroundTimer from 'react-native-background-timer';
 
 import {BottomSheetPropsRef} from '../../../../components/BottomSheet/index';
 import Tasks from './Tasks';
@@ -22,13 +24,23 @@ import {Task} from '~/interfaces';
 import Database from '~/utils/database';
 import {setTaskCompleted, setTaskFilter} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
+import {Notifications} from 'react-native-notifications';
+import BackgroundFetch from 'react-native-background-fetch';
+import {FormatDate} from '~/utils/formatDate';
+import {checkExpired} from '~/utils/checkExpired';
 interface Props {
   // showBottomSheet: boolean;
   // setShowBottomSheet: () => void;
   children?: React.ReactNode;
   navigation: any;
 }
-type TitleFilter = 'myDay' | 'important' | 'planned' | 'all';
+type TitleFilter =
+  | 'myDay'
+  | 'important'
+  | 'expired'
+  | 'planned'
+  | 'all'
+  | 'expired';
 const Home = React.forwardRef<BottomSheetPropsRef, Props>(
   ({navigation}, ref) => {
     const {t} = useTranslation();
@@ -48,6 +60,10 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       {
         title: 'important',
         description: 'Important',
+      },
+      {
+        title: 'expired',
+        description: 'Expired',
       },
 
       {
@@ -69,11 +85,26 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       const today = new Date();
       if (filterSelected === 'myDay') {
         const tasksFiltered = tasks.filter(task => {
+          const time = new Date(
+            `${FormatDate(task.start.date)} ${task.start.time}`,
+          ).getTime();
+
           const {start} = task;
           const {date} = start;
-          return moment(date, 'MM/DD/YYYY').isSame(today, 'day');
+          return (
+            !checkExpired(time) &&
+            moment(date, 'MM/DD/YYYY').isSame(today, 'day')
+          );
         });
         setTasksFiltered(tasksFiltered);
+      } else if (filterSelected === 'expired') {
+        const taskExpired = tasks.filter(task => {
+          const time = new Date(
+            `${FormatDate(task.start.date)} ${task.start.time}`,
+          ).getTime();
+          return checkExpired(time);
+        });
+        setTasksFiltered(taskExpired);
       } else {
         setTasksFiltered(tasks);
       }
@@ -86,6 +117,21 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       dispatch(setTaskFilter(tasksUndone));
       dispatch(setTaskCompleted(tasksDone));
     }, [tasksFiltered]);
+    // useEffect(() => {
+    //   BackgroundFetch.configure(
+    //     {
+    //       minimumFetchInterval: 15,
+    //     },
+    //     taskId => {
+
+    //       BackgroundFetch.finish(taskId);
+    //     },
+    //     (taskId) => {
+    //       BackgroundFetch.finish(taskId);
+    //       console.log('fetching1');
+    //     },
+    //   );
+    // }, []);
     return (
       <View style={{backgroundColor: '#fff', flex: 1}}>
         <Greeting />

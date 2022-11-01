@@ -34,3 +34,6 @@ export interface IUser {
     name: string;
 
 }
+export interface TaskWithBackgroundId extends Task{
+  backgroundId?: number[]
+}

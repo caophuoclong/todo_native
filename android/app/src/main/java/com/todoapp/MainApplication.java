@@ -13,6 +13,7 @@ import com.todoapp.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.wix.reactnativenotifications.RNNotificationsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

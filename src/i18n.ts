@@ -36,7 +36,15 @@ const resources = {
             End: "End",
             Close : "Close",
             To: "To",
-
+            MessageNotify: "You have a task",
+            In: "in",
+            Minutes: "minutes",
+            Now: "Now",
+            Expired: "Expired",
+            Delete: "Delete",
+            // MessageNotify: (title: string, timer?: number)=>{
+            //   return `You have a task ${title} ${timer ? `in ${timer} minutes` : "now"}`;
+            // }
         }
     },
     vi: {
@@ -74,6 +82,15 @@ const resources = {
             End: "Kết thúc",
             Close : "Đóng",
             To: "Đến",
+            MessageNotify: "Bạn có một công việc",
+            In: "trong",
+            Minutes: "phút",
+            Now: "bây giờ",
+            Expired: "Hết hạn",
+            Delete: "Xóa",
+            // MessageNotify: (title: string, timer?: number)=>{
+            //   return `Bạn có công việc ${title} ${timer ? `trong ${timer} phút` : "bây giờ"}`;
+            // }
 
         }
     }

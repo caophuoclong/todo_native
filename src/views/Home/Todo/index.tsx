@@ -26,6 +26,7 @@ import {BottomSheetPropsRef} from '../../../components/BottomSheet/index';
 const Tab = createBottomTabNavigator();
 export default function Todo() {
   const ref = useRef<BottomSheetPropsRef>(null);
+
   const handlePress = () => {
     const isActive = ref.current?.isActive();
     if (isActive) {

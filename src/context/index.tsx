@@ -1,20 +1,21 @@
 import React, {useReducer} from 'react';
 import Database from '~/utils/database';
-import {IUser, Language, Task} from '../interfaces';
+import {IUser, Language, Task, TaskWithBackgroundId} from '../interfaces';
 import {TaskType} from '../interfaces/index';
-
+import {Type} from './type';
 type Props = {
   children: React.ReactNode;
 };
 
 interface initialState {
   active: boolean;
-  task: Task;
-  tasks: Array<Task>;
-  tasksFiltered: Array<Task>;
-  taskCompleted: Array<Task>;
+  task: TaskWithBackgroundId;
+  tasks: Array<TaskWithBackgroundId>;
+  tasksFiltered: Array<TaskWithBackgroundId>;
+  taskCompleted: Array<TaskWithBackgroundId>;
   user: IUser;
   lan: Language;
+  sortType: 'asc' | 'desc';
 }
 const initialValue: initialState = {
   lan: 'vi',
@@ -40,25 +41,13 @@ const initialValue: initialState = {
       title: 'important',
       name: 'Important',
     },
+    backgroundId: [],
   },
   tasks: [],
   tasksFiltered: [],
   taskCompleted: [],
+  sortType: 'desc',
 };
-export enum Type {
-  SET_ACTIVE = 'SET_ACTIVE',
-  SET_TASK = 'SET_TASK',
-  ADD_TASK = 'ADD_TASK',
-  SET_TASK_FILTER = 'SET_TASK_FILTER',
-  SET_DONE = 'SET_DONE',
-  SET_TASK_COMPLETED = 'SET_TASK_COMPLETED',
-  SET_NO_DONE = 'SET_NO_DONE',
-  SET_USER = 'SET_USER',
-  SET_TASKS = 'SET_TASKS',
-  SET_EMPTY_TASKS = 'SET_EMPTY_TASKS',
-  CLEAR_DATA = 'CLEAR_DATA',
-  SET_LAN = 'SET_LAN',
-}
 
 interface action {
   type: Type;
@@ -88,13 +77,41 @@ export const emptyState: initialState = {
       title: 'important',
       name: 'Important',
     },
+    backgroundId: [],
   },
   tasks: [],
   tasksFiltered: [],
   taskCompleted: [],
+  sortType: 'desc',
 };
 const reducer = (state: initialState, action: action) => {
   switch (action.type) {
+    case Type.DELETE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter(task => task._id !== action.payload),
+      };
+    case Type.SET_SORT_TYPE:
+      return {
+        ...state,
+        sortType: action.payload,
+      };
+    case Type.SET_BACKGROUND_ID: {
+      const {_id, data} = action.payload;
+      const index = state.tasks.findIndex(item => item._id === _id);
+      state.tasks[index].backgroundId = data;
+      return {
+        ...state,
+      };
+    }
+
+    case Type.SET_ALERT:
+      const {_id, enable} = action.payload;
+      const index = state.tasks.findIndex(item => item._id === _id);
+      state.tasks[index].isAlert = enable;
+      return {
+        ...state,
+      };
     case Type.SET_LAN:
       return {
         ...state,
@@ -134,7 +151,7 @@ const reducer = (state: initialState, action: action) => {
         tasks: action.payload,
       };
     case Type.ADD_TASK:
-      const tasks = [...state.tasks, state.task];
+      const tasks = [...state.tasks, action.payload];
       return {
         ...state,
         tasks,

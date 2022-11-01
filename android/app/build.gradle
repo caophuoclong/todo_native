@@ -261,6 +261,7 @@ android {
 }
 
 dependencies {
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':react-native-splash-screen')
     //noinspection GradleDynamicVersion
@@ -289,6 +290,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation project(':react-native-notifications')
+    implementation 'com.google.firebase:firebase-core:16.0.0'
 }
 
 if (isNewArchitectureEnabled()) {
@@ -324,3 +327,5 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
+apply plugin: 'com.google.gms.google-services'
+

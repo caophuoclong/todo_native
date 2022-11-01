@@ -21,6 +21,12 @@ import Database from '~/utils/database';
 import {addTask, setEmptyTask, setTask} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
 import {ScrollView} from 'react-native-gesture-handler';
+import {calculateTimeout} from '../../../../../utils/calculateTimeout';
+import BackgroundTimer from 'react-native-background-timer';
+import {PushNoti} from '~/utils/pushNoti';
+import {schedulerBackground} from '../../../../../utils/schedulerBackground';
+import {FormatDate} from '~/utils/formatDate';
+import {getTimer} from '../../../../../utils/getTimer';
 
 interface Props {}
 const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
@@ -56,7 +62,6 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     }
   };
   const selected = state.task.type;
-  const [isEnable, setIsEnable] = useState(state.task.isAlert);
   const [inputDesHeight, setInputDesHeight] = useState(0);
   const [timePress, setTimePress] = useState(0);
   useEffect(() => {
@@ -79,7 +84,6 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     const timeEnd = state.task.end.time;
     const date = dateStart.split('/').join('-');
     const dateTime = new Date(`${date} ${timeStart}`);
-
     if (timeStart && !timeEnd) {
       const nextHour = new Date(dateTime.getTime() + 60 * 60 * 1000);
       dispatch(
@@ -104,12 +108,25 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     );
   const handleSubmit = async () => {
     const _id = new Date().getTime().toString();
+    const task = state.task;
+    console.log('_id', _id);
+    task._id = _id;
     dispatch(
       setTask({
         _id: _id,
       }),
     );
-    dispatch(addTask());
+    // check if task is alert"MM-DD-YYYY HH:mm"
+    let backgroundId: number[] = [];
+    if (task.isAlert) {
+      const date = FormatDate(task.start.date);
+      const dateTime = new Date(`${date} ${task.start.time}`).getTime();
+      const timer = getTimer(task.type);
+      backgroundId = schedulerBackground(timer, dateTime, task.title, t);
+    }
+    task.backgroundId = backgroundId;
+    console.log(task);
+    dispatch(addTask(task));
     dispatch(setEmptyTask());
     // Hide keyboard
     Keyboard.dismiss();
@@ -350,7 +367,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         </Text>
         <Switch
           trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isEnable ? '#5A3DA4' : '#f4f3f4'}
+          thumbColor={state.task.isAlert ? '#5A3DA4' : '#f4f3f4'}
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
           value={state.task.isAlert}

@@ -32,6 +32,13 @@ import {useTranslation} from 'react-i18next';
 import SplashScreen from 'react-native-splash-screen';
 import {setLan, setTasks, setUser} from '~/context/actions';
 import useAppContext from '~/hooks/useAppContext';
+import {
+  Notification,
+  NotificationCompletion,
+  Notifications,
+  Registered,
+  RegistrationError,
+} from 'react-native-notifications';
 
 const Stack = createNativeStackNavigator<NavigationParamsList>();
 
@@ -64,34 +71,29 @@ const App = () => {
     });
   }, []);
   useEffect(() => {
-    (async () => {
-      let locale;
-      if (Platform.OS === 'android') {
-        // get locale from device
-        locale = NativeModules.I18nManager.localeIdentifier;
-      } else {
-        // get locale from device
-        locale = NativeModules.SettingsManager.settings.AppleLocale;
-      }
-      const data = await Database._retriveData('user');
-      const tasks = await Database._retriveData('tasks');
-      const lan =
-        (await Database._retriveData('lan')) ||
-        (locale === 'en_US' && 'en') ||
-        (locale === 'vi_VN' && 'vi') ||
-        'en';
-      if (tasks) {
-        dispatch(setTasks(JSON.parse(tasks)));
-      }
-      if (data) {
-        dispatch(setUser(JSON.parse(data) as IUser));
-      }
-      if (lan) {
-        dispatch(setLan(lan));
-        i18n.changeLanguage(lan);
-      }
-      SplashScreen.hide();
-    })();
+    Notifications.registerRemoteNotifications();
+    Notifications.events().registerRemoteNotificationsRegistered(
+      (event: Registered) => {
+        // TODO: Send the token to my server so it could send back push notifications...
+        console.log('Device Token Received', event.deviceToken);
+      },
+    );
+    Notifications.events().registerRemoteNotificationsRegistrationFailed(
+      (event: RegistrationError) => {
+        console.error(event);
+      },
+    );
+    Notifications.events().registerNotificationReceivedForeground(
+      (
+        notification: Notification,
+        completion: (response: NotificationCompletion) => void,
+      ) => {
+        // Prints the notification payload
+        console.log(JSON.stringify(notification.payload));
+
+        completion({alert: false, sound: false, badge: false});
+      },
+    );
   }, []);
   return (
     <ContextProvider>

@@ -1,6 +1,37 @@
-import {IUser, Task} from '~/interfaces';
-import {emptyState, Type} from '..';
+import {IUser, Task, TaskWithBackgroundId} from '~/interfaces';
+import {emptyState} from '..';
+import {Type} from '../type';
 import {Language} from '../../interfaces/index';
+export const deleteTask = (_id: string) => {
+  return {
+    type: Type.DELETE_TASK,
+    payload: _id,
+  };
+};
+export const setSortType = (sortType: 'asc' | 'desc') => {
+  return {
+    type: Type.SET_SORT_TYPE,
+    payload: sortType,
+  };
+};
+export const setBackgroundId = (_id: string, data: number[]) => {
+  return {
+    type: Type.SET_BACKGROUND_ID,
+    payload: {
+      _id,
+      data,
+    },
+  };
+};
+export const setAlert = ({_id, enable}: {_id: string; enable: boolean}) => {
+  return {
+    type: Type.SET_ALERT,
+    payload: {
+      _id,
+      enable,
+    },
+  };
+};
 
 export const setLan = (lan: Language) => {
   return {
@@ -45,10 +76,10 @@ export const setTaskCompleted = (tasks: Array<Task>) => {
     payload: tasks,
   };
 };
-export const addTask = () => {
+export const addTask = (task: TaskWithBackgroundId) => {
   return {
     type: Type.ADD_TASK,
-    payload: null,
+    payload: task,
   };
 };
 export const setUser = (user: Partial<IUser>) => {
@@ -57,7 +88,7 @@ export const setUser = (user: Partial<IUser>) => {
     payload: user,
   };
 };
-export const setTask = (task: Partial<Task>) => {
+export const setTask = (task: Partial<TaskWithBackgroundId>) => {
   return {
     type: Type.SET_TASK,
     payload: task,

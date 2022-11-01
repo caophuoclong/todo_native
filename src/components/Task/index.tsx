@@ -21,7 +21,11 @@ const Task: React.FC<
   };
   return (
     <TouchableOpacity
-      disabled={handleTaskPress === undefined ? true : false}
+      disabled={
+        (description && description.length > 0) || handleTaskPress === undefined
+          ? true
+          : false
+      }
       style={style.container}
       onPress={() => {
         if (handleTaskPress) {
