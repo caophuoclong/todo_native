@@ -7,7 +7,6 @@ export const schedulerBackground : (timer: number[], datetime: number, title: st
     const backgroundId: number[] = [];
     for (let i = 0; i < timer.length; i++) {
         const x = calculateTimeout(datetime, timer[i] * 60 * 1000);
-        console.log("🚀 ~ file: schedulerBackground.ts ~ line 10 ~ scheduler", x)
         if (x > 0) {
           backgroundId.push(
             BackgroundTimer.setTimeout(() => {

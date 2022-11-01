@@ -62,7 +62,7 @@ const Task: React.FC<
                 fontSize: 16,
                 fontWeight: '500',
               }}>
-              {start.time}
+              {`${start.time.hour}:${start.time.minute}`}
             </Text>
             <Text
               style={{
@@ -77,7 +77,7 @@ const Task: React.FC<
                 fontSize: 16,
                 fontWeight: '500',
               }}>
-              {end.time}
+              {`${end.time.hour}:${end.time.minute}`}
             </Text>
           </View>
         </View>

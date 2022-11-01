@@ -19,6 +19,7 @@ import Database from '~/utils/database';
 import useAppContext from '~/hooks/useAppContext';
 import {setUser} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
+import {initialLevelNotify} from '../../../context/index';
 type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Home'>;
 };
@@ -28,7 +29,20 @@ export default function Welcome() {
   const {state, dispatch} = useAppContext();
   const [modalVisible, setModalVisible] = React.useState(false);
   const {t} = useTranslation();
-
+  const handleSubmit = async () => {
+    console.log(123123123);
+    console.log(name);
+    if (name.length > 0) {
+      const user: IUser = {
+        name: name,
+        level: initialLevelNotify,
+      };
+      await Database._storeData('user', JSON.stringify(user));
+      dispatch(setUser(user));
+    } else {
+      setModalVisible(true);
+    }
+  };
   return (
     <View style={[style.container]}>
       <Image
@@ -47,32 +61,12 @@ export default function Welcome() {
         onChangeText={text => setName(text)}
         onKeyPress={async e => {
           if (e.nativeEvent.key === 'Enter') {
-            if (name) {
-              const user: IUser = {
-                name: name,
-              };
-              await Database._storeData('user', JSON.stringify(user));
-              dispatch(setUser(user));
-            } else {
-              setModalVisible(true);
-            }
+            handleSubmit();
           }
         }}
         placeholder={t('EnterYourName')}
       />
-      <Pressable
-        style={style.button}
-        onPress={async () => {
-          if (name.length > 0) {
-            const user: IUser = {
-              name: name,
-            };
-            await Database._storeData('user', JSON.stringify(user));
-            dispatch(setUser(user));
-          } else {
-            setModalVisible(true);
-          }
-        }}>
+      <Pressable style={style.button} onPress={handleSubmit}>
         <Text
           style={{
             fontSize: 30,

@@ -3,7 +3,7 @@ import React from 'react';
 import useAppContext from '~/hooks/useAppContext';
 import Task from '~/components/Task';
 import {useTranslation} from 'react-i18next';
-import {FormatDate} from '~/utils/formatDate';
+import moment from 'moment';
 
 export default function Completed() {
   const {t} = useTranslation();
@@ -11,8 +11,12 @@ export default function Completed() {
   const {taskCompleted} = state;
   taskCompleted.sort(
     (a, b) =>
-      new Date(`${FormatDate(b.start.date)} ${b.start.time}`).getTime() -
-      new Date(`${FormatDate(a.start.date)} ${a.start.time}`).getTime(),
+      new Date(
+        `${moment(b.start.date).format('DD-MM-YYYY')} ${b.start.time}`,
+      ).getTime() -
+      new Date(
+        `${moment(a.start.date).format('DD-MM-YYYY')} ${a.start.time}`,
+      ).getTime(),
   );
   return (
     <View style={{flex: 2, marginVertical: 10, paddingHorizontal: 10}}>

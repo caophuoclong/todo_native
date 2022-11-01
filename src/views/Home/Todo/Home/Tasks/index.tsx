@@ -7,11 +7,11 @@ import {BottomSheetPropsRef} from '../../../../../components/BottomSheet/index';
 import {Task as TaskType} from '~/interfaces';
 import DetailTask from '~/components/DetailTask';
 import {useTranslation} from 'react-i18next';
-import {FormatDate} from '~/utils/formatDate';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {deleteTask, setSortType} from '~/context/actions';
 import BackgroundTimer from 'react-native-background-timer';
+import moment from 'moment';
 export default function Tasks() {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
@@ -29,13 +29,29 @@ export default function Tasks() {
   tasksFiltered.sort((a, b) => {
     if (state.sortType === 'desc') {
       return (
-        new Date(`${FormatDate(b.start.date)} ${b.start.time}`).getTime() -
-        new Date(`${FormatDate(a.start.date)} ${a.start.time}`).getTime()
+        new Date(
+          `${moment(b.start.date).format('DD-MM-YYYY')} ${moment(
+            b.start.time,
+          ).format('HH:mm')}`,
+        ).getTime() -
+        new Date(
+          `${moment(a.start.date).format('DD-MM-YYYY')} ${moment(
+            a.start.time,
+          ).format('HH:mm')}`,
+        ).getTime()
       );
     } else {
       return (
-        new Date(`${FormatDate(a.start.date)} ${a.start.time}`).getTime() -
-        new Date(`${FormatDate(b.start.date)} ${b.start.time}`).getTime()
+        new Date(
+          `${moment(a.start.date).format('DD-MM-YYYY')} ${moment(
+            a.start.time,
+          ).format('HH:mm')}`,
+        ).getTime() -
+        new Date(
+          `${moment(b.start.date).format('DD-MM-YYYY')} ${moment(
+            b.start.time,
+          ).format('HH:mm')}`,
+        ).getTime()
       );
     }
   });

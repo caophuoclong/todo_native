@@ -22,19 +22,20 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       let locale = getLocale();
-      const data = await Database._retriveData('user');
+      const data = JSON.parse(await Database._retriveData('user'));
       const tasks = await Database._retriveData('tasks');
+      console.log(tasks);
       const lan =
         (await Database._retriveData('lan')) ||
         (locale === 'en_US' && 'en') ||
         (locale === 'vi_VN' && 'vi') ||
-        'en';
+        'vi';
+
       if (tasks) {
         dispatch(setTasks(JSON.parse(tasks)));
       }
       if (data) {
-        setData(data);
-        dispatch(setUser(JSON.parse(data) as IUser));
+        dispatch(setUser(data));
       }
       if (lan) {
         dispatch(setLan(lan));
@@ -43,7 +44,8 @@ const Home = () => {
       SplashScreen.hide();
     })();
   }, []);
-  return <>{state.user.name || data ? <Todo /> : <Welcome />}</>;
+
+  return <>{state.user.name ? <Todo /> : <Welcome />}</>;
 };
 
 export default Home;

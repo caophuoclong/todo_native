@@ -26,7 +26,6 @@ import {setTaskCompleted, setTaskFilter} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
 import {Notifications} from 'react-native-notifications';
 import BackgroundFetch from 'react-native-background-fetch';
-import {FormatDate} from '~/utils/formatDate';
 import {checkExpired} from '~/utils/checkExpired';
 interface Props {
   // showBottomSheet: boolean;
@@ -82,27 +81,46 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
     }, [filterSelected]);
     useEffect(() => {
       const {tasks} = state;
-      const today = new Date();
       if (filterSelected === 'myDay') {
         const tasksFiltered = tasks.filter(task => {
-          const time = new Date(
-            `${FormatDate(task.start.date)} ${task.start.time}`,
-          ).getTime();
+          const today = new Date();
+          const date = task.start.date;
+          const time = task.start.time;
+          if (date && time) {
+            const dateTime = new Date(
+              date?.year,
+              date?.month,
+              date?.day,
+              time?.hour,
+              time?.minute,
+            );
 
-          const {start} = task;
-          const {date} = start;
-          return (
-            !checkExpired(time) &&
-            moment(date, 'MM/DD/YYYY').isSame(today, 'day')
-          );
+            return (
+              !checkExpired(dateTime.getTime()) &&
+              moment(dateTime).isSame(today, 'day')
+            );
+          } else {
+            return true;
+          }
         });
         setTasksFiltered(tasksFiltered);
       } else if (filterSelected === 'expired') {
         const taskExpired = tasks.filter(task => {
-          const time = new Date(
-            `${FormatDate(task.start.date)} ${task.start.time}`,
-          ).getTime();
-          return checkExpired(time);
+          const date = task.start.date;
+          const time = task.start.time;
+          if (date && time) {
+            const dateTime = new Date(
+              date?.year,
+              date?.month,
+              date?.day,
+              time?.hour,
+              time?.minute,
+            );
+
+            return checkExpired(dateTime.getTime());
+          } else {
+            return true;
+          }
         });
         setTasksFiltered(taskExpired);
       } else {
@@ -117,21 +135,17 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       dispatch(setTaskFilter(tasksUndone));
       dispatch(setTaskCompleted(tasksDone));
     }, [tasksFiltered]);
-    // useEffect(() => {
-    //   BackgroundFetch.configure(
-    //     {
-    //       minimumFetchInterval: 15,
-    //     },
-    //     taskId => {
+    useEffect(() => {
+      (async () => {
+        await Database._storeData('tasks', JSON.stringify(state.tasks));
+      })();
+    }, [state.tasks]);
+    useEffect(() => {
+      (async () => {
+        await Database._storeData('user', JSON.stringify(state.user));
+      })();
+    }, [state.user]);
 
-    //       BackgroundFetch.finish(taskId);
-    //     },
-    //     (taskId) => {
-    //       BackgroundFetch.finish(taskId);
-    //       console.log('fetching1');
-    //     },
-    //   );
-    // }, []);
     return (
       <View style={{backgroundColor: '#fff', flex: 1}}>
         <Greeting />

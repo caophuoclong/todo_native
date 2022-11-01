@@ -16,28 +16,33 @@ import AppModal from '../AppModal';
 import {useTranslation} from 'react-i18next';
 import useAppContext from '~/hooks/useAppContext';
 import {setAlert, setBackgroundId, deleteTask} from '~/context/actions';
-import {FormatDate} from '~/utils/formatDate';
 import BackgroundTimer from 'react-native-background-timer';
 
-import {getTimer} from '~/utils/getTimer';
 import {schedulerBackground} from '~/utils/schedulerBackground';
+import moment from 'moment';
 interface Props {
   task: TaskWithBackgroundId | null;
   onDeleteTask: (_id: string) => void;
 }
 const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
-  const {dispatch} = useAppContext();
+  const {state, dispatch} = useAppContext();
   const {t} = useTranslation();
   const [showModal, setShowModal] = useState(false);
-
   const toggleSwitch = () => {
     const isEnable = task?.isAlert;
     if (task) {
-      const date = FormatDate(task.start.date);
+      const date = task.start.date;
       const time = task.start.time;
-      const timestamp = new Date(`${date} ${time}`).getTime();
+      const dateTime = new Date(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+      const timestamp = dateTime.getTime();
       if (!isEnable) {
-        const timer = getTimer(task.type);
+        const timer = state.user.level[task.type.title];
         const backgroundId = schedulerBackground(
           timer,
           timestamp,
@@ -64,7 +69,7 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
         <View
           style={[
             {
-              width: 90,
+              width: 120,
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 10,
@@ -87,6 +92,7 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
             style={{
               color: '#fff',
               fontWeight: 'bold',
+              fontSize: 14,
             }}>
             {t(task.type.name)}
           </Text>
@@ -121,7 +127,9 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   fontSize: 14,
                   fontWeight: 'bold',
                   color: 'black',
-                }}>{`${task.start.date} - ${task.start.time}`}</Text>
+                }}>{`${moment(task.start.date).format('DD-MM-YYYY')} - ${
+                task.start.time.hour
+              }:${task.start.time.minute}`}</Text>
             </View>
           </View>
           <View>
@@ -148,7 +156,9 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   fontSize: 14,
                   fontWeight: 'bold',
                   color: 'black',
-                }}>{`${task.end.date} - ${task.end.time}`}</Text>
+                }}>{`${moment(task.end.date).format('DD-MM-YYYY')} - ${
+                task.end.time.hour
+              }:${task.end.time.minute}`}</Text>
             </View>
           </View>
         </View>

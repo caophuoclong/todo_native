@@ -25,10 +25,24 @@ import {calculateTimeout} from '../../../../../utils/calculateTimeout';
 import BackgroundTimer from 'react-native-background-timer';
 import {PushNoti} from '~/utils/pushNoti';
 import {schedulerBackground} from '../../../../../utils/schedulerBackground';
-import {FormatDate} from '~/utils/formatDate';
-import {getTimer} from '../../../../../utils/getTimer';
+import {getLocale} from '../../../../../utils/getLocale';
+import _ from 'lodash';
 
 interface Props {}
+export const taskType: Array<TaskType> = [
+  {
+    title: 'important',
+    name: 'Important',
+  },
+  {
+    title: 'normal',
+    name: 'Normal',
+  },
+  {
+    title: 'unimportant',
+    name: 'Unimportant',
+  },
+];
 const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
@@ -40,21 +54,8 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
   const [openDatePickerEnd, setOpenDatePickerEnd] = useState<boolean>(false);
   // const [isDelete]
 
-  const taskType: Array<TaskType> = [
-    {
-      title: 'important',
-      name: 'Important',
-    },
-    {
-      title: 'normal',
-      name: 'Normal',
-    },
-    {
-      title: 'unimportant',
-      name: 'Unimportant',
-    },
-  ];
   const handleCancel = () => {
+    dispatch(setEmptyTask());
     Keyboard.dismiss();
     if (ref) {
       // @ts-ignore
@@ -79,25 +80,30 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     }
   }, [state.task.start.date]);
   useEffect(() => {
-    const dateStart = state.task.start.date;
-    const timeStart = state.task.start.time;
-    const timeEnd = state.task.end.time;
-    const date = dateStart.split('/').join('-');
-    const dateTime = new Date(`${date} ${timeStart}`);
-    if (timeStart && !timeEnd) {
-      const nextHour = new Date(dateTime.getTime() + 60 * 60 * 1000);
-      dispatch(
-        setTask({
-          end: {
-            ...state.task.end,
-            time: nextHour.toLocaleTimeString('vi-VN', {
-              hour12: false,
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
-          },
-        }),
+    const date = state.task.start.date;
+    const time = state.task.start.time;
+    if (date && time) {
+      const dateTime = new Date(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
       );
+      if (date && time && _.isEmpty(state.task.end.time)) {
+        const nextHour = new Date(dateTime.getTime() + 60 * 60 * 1000);
+        dispatch(
+          setTask({
+            end: {
+              ...state.task.end,
+              time: {
+                hour: nextHour.getHours(),
+                minute: nextHour.getMinutes(),
+              },
+            },
+          }),
+        );
+      }
     }
   }, [state.task.start.time]);
   const toggleSwitch = () =>
@@ -109,7 +115,6 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
   const handleSubmit = async () => {
     const _id = new Date().getTime().toString();
     const task = state.task;
-    console.log('_id', _id);
     task._id = _id;
     dispatch(
       setTask({
@@ -118,11 +123,24 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     );
     // check if task is alert"MM-DD-YYYY HH:mm"
     let backgroundId: number[] = [];
-    if (task.isAlert) {
-      const date = FormatDate(task.start.date);
-      const dateTime = new Date(`${date} ${task.start.time}`).getTime();
-      const timer = getTimer(task.type);
-      backgroundId = schedulerBackground(timer, dateTime, task.title, t);
+    const date = state.task.start.date;
+    const time = state.task.start.time;
+    if (task.isAlert && date && time) {
+      const dateTime = new Date(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+
+      const timer = state.user.level[task.type.title];
+      backgroundId = schedulerBackground(
+        timer,
+        dateTime.getTime(),
+        task.title,
+        t,
+      );
     }
     task.backgroundId = backgroundId;
     console.log(task);
@@ -135,11 +153,6 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       ref.current.scrollTo(0);
     }
   };
-  useEffect(() => {
-    (async () => {
-      await Database._storeData('tasks', JSON.stringify(state.tasks));
-    })();
-  }, [state.tasks]);
   // console.log(timePress);
   return (
     <BottomSheet ref={ref}>
@@ -214,11 +227,11 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               flex: 0.5,
             }}
             onPress={() => setOpenDatePickerStart(true)}>
-            {state.task.start.date.length > 0 ? (
+            {state.task.start.date !== null ? (
               <View style={style.btnIcon}>
                 <AntIcon name="calendar" size={24} />
                 <Text style={[style.text, {marginLeft: 10}]}>
-                  {state.task.start.date}
+                  {moment(state.task.start.date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             ) : (
@@ -236,12 +249,12 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               flex: 0.5,
             }}
             onPress={() => setOpenTimePickerStart(true)}>
-            {state.task.start.time.length > 0 ? (
+            {state.task.start.time !== null ? (
               <View style={style.btnIcon}>
                 <AntIcon name="clockcircleo" size={24} />
 
                 <Text style={[style.text, {marginLeft: 10}]}>
-                  {state.task.start.time}
+                  {`${moment(state.task.start.time).format('HH:mm')}`}
                 </Text>
               </View>
             ) : (
@@ -268,12 +281,12 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               flex: 0.5,
             }}
             onPress={() => setOpenDatePickerEnd(true)}>
-            {state.task.end.date.length > 0 ? (
+            {state.task.end.date !== null ? (
               <View style={style.btnIcon}>
                 <AntIcon name="calendar" size={24} />
 
                 <Text style={[style.text, {marginLeft: 10}]}>
-                  {state.task.end.date}
+                  {moment(state.task.end.date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             ) : (
@@ -292,12 +305,12 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               flex: 0.5,
             }}
             onPress={() => setOpenTimePickerEnd(true)}>
-            {state.task.end.time.length > 0 ? (
+            {state.task.end.time !== null ? (
               <View style={style.btnIcon}>
                 <AntIcon name="clockcircleo" size={24} />
 
                 <Text style={[style.text, {marginLeft: 10}]}>
-                  {state.task.end.time}
+                  {`${moment(state.task.end.time).format('HH:mm')}`}
                 </Text>
               </View>
             ) : (
@@ -400,11 +413,9 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         </TouchableOpacity>
         <TouchableOpacity
           disabled={
-            !state.task.title.length ||
-            !state.task.start.date.length ||
-            !state.task.start.time.length ||
-            !state.task.end.date.length ||
-            !state.task.end.time.length
+            state.task.title.length === 0 ||
+            _.isEmpty(state.task.start) ||
+            _.isEmpty(state.task.end)
           }
           style={[style.btn, style.btnSubmit]}
           onPress={handleSubmit}>
@@ -422,16 +433,23 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       <DatePicker
         mode="date"
         modal
+        locale={getLocale()}
         open={openDatePickerStart}
         date={new Date()}
         onConfirm={date => {
           setOpenDatePickerStart(false);
-          const date1 = date.toLocaleDateString();
+          const day = date.getDate();
+          const month = date.getMonth();
+          const year = date.getFullYear();
           dispatch(
             setTask({
               start: {
                 ...state.task.start,
-                date: date1,
+                date: {
+                  day,
+                  month,
+                  year,
+                },
               },
             }),
           );
@@ -443,20 +461,21 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       <DatePicker
         mode="time"
         modal
+        locale={getLocale()}
         open={openTimePickerStart}
         date={new Date()}
         onConfirm={date => {
           setOpenTimePickerStart(false);
-          const time = date.toLocaleTimeString('vi-VN', {
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit',
-          });
+          const hour = date.getHours();
+          const minute = date.getMinutes();
           dispatch(
             setTask({
               start: {
                 ...state.task.start,
-                time: time,
+                time: {
+                  hour,
+                  minute,
+                },
               },
             }),
           );
@@ -468,16 +487,31 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       <DatePicker
         mode="date"
         modal
+        locale={getLocale()}
         open={openDatePickerEnd}
-        date={new Date()}
+        date={
+          _.isEmpty(state.task.start.date)
+            ? new Date()
+            : new Date(
+                state.task.start.date.year,
+                state.task.start.date.month,
+                state.task.start.date.day,
+              )
+        }
         onConfirm={date => {
           setOpenDatePickerEnd(false);
-          const date1 = date.toLocaleDateString();
+          const day = date.getDate();
+          const month = date.getMonth();
+          const year = date.getFullYear();
           dispatch(
             setTask({
               end: {
                 ...state.task.end,
-                date: date1,
+                date: {
+                  day,
+                  month,
+                  year,
+                },
               },
             }),
           );
@@ -489,20 +523,34 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       <DatePicker
         mode="time"
         modal
+        locale={getLocale()}
         open={openTimePickerEnd}
-        date={new Date()}
+        // date={new Date()}
+        date={
+          _.isEmpty(state.task.start.date) ||
+          _.isEmpty(state.task.start.time) ||
+          _.isEmpty(state.task.end.time)
+            ? new Date()
+            : new Date(
+                state.task.start.date.year,
+                state.task.start.date.month,
+                state.task.start.date.day,
+                state.task.end.time.hour,
+                state.task.end.time.minute,
+              )
+        }
         onConfirm={date => {
           setOpenTimePickerEnd(false);
-          const time = date.toLocaleTimeString('vi-VN', {
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit',
-          });
+          const hour = date.getHours();
+          const minute = date.getMinutes();
           dispatch(
             setTask({
               end: {
                 ...state.task.end,
-                time: time,
+                time: {
+                  hour,
+                  minute,
+                },
               },
             }),
           );

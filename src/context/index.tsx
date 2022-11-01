@@ -17,23 +17,31 @@ interface initialState {
   lan: Language;
   sortType: 'asc' | 'desc';
 }
+export const initialLevelNotify: {
+  [key in TaskType['title']]: number[];
+} = {
+  important: [15, 10, 5, 3, 0],
+  normal: [5, 3, 0],
+  unimportant: [3, 0],
+};
 const initialValue: initialState = {
   lan: 'vi',
   active: false,
   user: {
     name: '',
+    level: initialLevelNotify,
   },
   task: {
     _id: '',
     title: '',
     description: '',
     start: {
-      date: '',
-      time: '',
+      date: null,
+      time: null,
     },
     end: {
-      date: '',
-      time: '',
+      date: null,
+      time: null,
     },
     isDone: false,
     isAlert: true,
@@ -53,23 +61,25 @@ interface action {
   type: Type;
   payload: any;
 }
+
 export const emptyState: initialState = {
   lan: 'vi',
   active: false,
   user: {
     name: '',
+    level: initialLevelNotify,
   },
   task: {
     _id: '',
     title: '',
     description: '',
     start: {
-      date: '',
-      time: '',
+      date: null,
+      time: null,
     },
     end: {
-      date: '',
-      time: '',
+      date: null,
+      time: null,
     },
     isDone: false,
     isAlert: true,
@@ -86,6 +96,30 @@ export const emptyState: initialState = {
 };
 const reducer = (state: initialState, action: action) => {
   switch (action.type) {
+    case Type.UPDATE_LEVEL: {
+      const {
+        type,
+        value,
+        index,
+      }: {
+        type: TaskType;
+        value: number;
+        index: number;
+      } = action.payload;
+      const {level} = state.user;
+      const newLevel = level[type.title];
+      newLevel[index] = value;
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          level: {
+            ...level,
+            [type.title]: newLevel,
+          },
+        },
+      };
+    }
     case Type.DELETE_TASK:
       return {
         ...state,

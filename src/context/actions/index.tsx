@@ -1,7 +1,17 @@
-import {IUser, Task, TaskWithBackgroundId} from '~/interfaces';
+import {IUser, Task, TaskType, TaskWithBackgroundId} from '~/interfaces';
 import {emptyState} from '..';
 import {Type} from '../type';
 import {Language} from '../../interfaces/index';
+export const updateLevel = (x: {
+  type: TaskType;
+  value: number;
+  index: number;
+}) => {
+  return {
+    type: Type.UPDATE_LEVEL,
+    payload: x,
+  };
+};
 export const deleteTask = (_id: string) => {
   return {
     type: Type.DELETE_TASK,

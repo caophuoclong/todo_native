@@ -42,6 +42,7 @@ const resources = {
             Now: "Now",
             Expired: "Expired",
             Delete: "Delete",
+            SetTimeToNotify: "Set time to notify",
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `You have a task ${title} ${timer ? `in ${timer} minutes` : "now"}`;
             // }
@@ -88,6 +89,7 @@ const resources = {
             Now: "bây giờ",
             Expired: "Hết hạn",
             Delete: "Xóa",
+            SetTimeToNotify: "Thiết lập thời gian thông báo",
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `Bạn có công việc ${title} ${timer ? `trong ${timer} phút` : "bây giờ"}`;
             // }
