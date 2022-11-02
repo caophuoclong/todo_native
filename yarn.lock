@@ -1127,6 +1127,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@notifee/react-native@^7.0.1":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@notifee/react-native/-/react-native-7.0.4.tgz#f0408484cd401f13baef0518d8537a3325378f3e"
+  integrity sha512-l41BLu3kYeVmySm9wyp/QF6yTfJoIvChn8FnGmc2WO7AR+GU54ZV3Ij6eIBS8SeHV0PLcmBiHqF9cecYXMJpUg==
+
 "@npmcli/arborist@^5.6.2":
   version "5.6.2"
   resolved "https://registry.yarnpkg.com/@npmcli/arborist/-/arborist-5.6.2.tgz#552b554f34777e5dcc8e68ad86cdaeebc0788790"

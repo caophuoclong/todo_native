@@ -5,20 +5,25 @@ import CheckBox from '../CheckBox';
 import {Task as ITask} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
 import {setDone, setNoDone} from '~/context/actions';
+import moment from 'moment';
 
 const Task: React.FC<
   ITask & {
     handleTaskPress?: (_id: string) => void;
+    handleSetDone: (_id: string, isDone: boolean) => void;
   }
-> = ({title, description, start, end, isDone, _id, handleTaskPress}) => {
+> = ({
+  title,
+  description,
+  start,
+  end,
+  isDone,
+  _id,
+  handleTaskPress,
+  handleSetDone,
+}) => {
   const {state, dispatch} = useAppContext();
-  const handleSetDone = () => {
-    if (isDone) {
-      dispatch(setNoDone(_id));
-    } else {
-      dispatch(setDone(_id));
-    }
-  };
+
   return (
     <TouchableOpacity
       disabled={
@@ -62,7 +67,7 @@ const Task: React.FC<
                 fontSize: 16,
                 fontWeight: '500',
               }}>
-              {`${start.time.hour}:${start.time.minute}`}
+              {moment(start.time).format('HH:mm')}
             </Text>
             <Text
               style={{
@@ -77,11 +82,16 @@ const Task: React.FC<
                 fontSize: 16,
                 fontWeight: '500',
               }}>
-              {`${end.time.hour}:${end.time.minute}`}
+              {moment(end.time).format('HH:mm')}
             </Text>
           </View>
         </View>
-        <CheckBox value={isDone} onValueChange={handleSetDone} />
+        <CheckBox
+          value={isDone}
+          onValueChange={() => {
+            handleSetDone(_id, !isDone);
+          }}
+        />
       </View>
       <View
         style={{

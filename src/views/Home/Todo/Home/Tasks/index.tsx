@@ -9,10 +9,17 @@ import DetailTask from '~/components/DetailTask';
 import {useTranslation} from 'react-i18next';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {deleteTask, setSortType} from '~/context/actions';
+import {deleteTask, setDone, setSortType} from '~/context/actions';
 import BackgroundTimer from 'react-native-background-timer';
 import moment from 'moment';
-export default function Tasks() {
+import notifee, {EventType} from '@notifee/react-native';
+import {checkExpired} from '~/utils/checkExpired';
+import {TitleFilter} from '../index';
+import {convertToDateTime} from '~/utils/convertToDateTime';
+type Props = {
+  handleSetFilterSelected: (filtered: TitleFilter) => void;
+};
+export default function Tasks({handleSetFilterSelected}: Props) {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
   const {tasksFiltered} = state;
@@ -82,6 +89,47 @@ export default function Tasks() {
       dispatch(setSortType('asc'));
     }
   };
+  const handleSetDone = (_id: string, isDone: boolean) => {
+    dispatch(setDone(_id, isDone));
+  };
+  useEffect(() => {
+    notifee.onForegroundEvent(({type, detail}) => {
+      if (
+        type === EventType.ACTION_PRESS &&
+        detail.pressAction?.id.includes('viewTask')
+      ) {
+        const taskId = detail.pressAction?.id.split('_')[1];
+        if (taskId) {
+          const task = state.tasks.find(x => x._id === taskId);
+          if (task) {
+            const date = task.start.date;
+            const time = task.start.time;
+            if (date && time) {
+              const dateTime = convertToDateTime(date, time);
+              if (checkExpired(dateTime.getTime())) {
+                handleSetFilterSelected('expired');
+              } else if (moment(dateTime).isSame(new Date(), 'day')) {
+                handleSetFilterSelected('myDay');
+              } else {
+                handleSetFilterSelected('all');
+              }
+            }
+            handleTaskPress(taskId);
+          } else {
+            return;
+          }
+        }
+      }
+      // id include makeDone
+      if (
+        type === EventType.ACTION_PRESS &&
+        detail.pressAction?.id.includes('makeDone')
+      ) {
+        const taskId = detail.pressAction?.id.split('_')[1];
+        handleSetDone(taskId, true);
+      }
+    });
+  }, []);
 
   return (
     <View style={[tasksFiltered.length > 0 ? {flex: 5} : {flex: 0}]}>
@@ -121,7 +169,12 @@ export default function Tasks() {
         </View>
         <ScrollView>
           {tasksFiltered.map((task, i) => (
-            <Task key={i} {...task} handleTaskPress={handleTaskPress} />
+            <Task
+              key={i}
+              {...task}
+              handleTaskPress={handleTaskPress}
+              handleSetDone={handleSetDone}
+            />
           ))}
         </ScrollView>
       </View>

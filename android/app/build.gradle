@@ -140,8 +140,8 @@ android {
         applicationId "com.todoapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "1.4"
+        versionCode 6
+        versionName "1.5"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         if (isNewArchitectureEnabled()) {
@@ -292,6 +292,7 @@ dependencies {
     }
     implementation project(':react-native-notifications')
     implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation "androidx.work:work-runtime:2.7.1"
 }
 
 if (isNewArchitectureEnabled()) {

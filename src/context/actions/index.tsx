@@ -2,6 +2,10 @@ import {IUser, Task, TaskType, TaskWithBackgroundId} from '~/interfaces';
 import {emptyState} from '..';
 import {Type} from '../type';
 import {Language} from '../../interfaces/index';
+export const setChannelId = (channelId: string) => ({
+  type: Type.SET_CHANNEL_ID,
+  payload: channelId,
+});
 export const updateLevel = (x: {
   type: TaskType;
   value: number;
@@ -68,10 +72,13 @@ export const setNoDone = (_id: string) => {
     payload: _id,
   };
 };
-export const setDone = (_id: string) => {
+export const setDone = (_id: string, isDone: boolean) => {
   return {
     type: Type.SET_DONE,
-    payload: _id,
+    payload: {
+      _id,
+      isDone,
+    },
   };
 };
 export const setTaskFilter = (tasks: Array<Task>) => {

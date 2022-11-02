@@ -75,12 +75,12 @@ const App = () => {
     Notifications.events().registerRemoteNotificationsRegistered(
       (event: Registered) => {
         // TODO: Send the token to my server so it could send back push notifications...
-        console.log('Device Token Received', event.deviceToken);
+        // console.log('Device Token Received', event.deviceToken);
       },
     );
     Notifications.events().registerRemoteNotificationsRegistrationFailed(
       (event: RegistrationError) => {
-        console.error(event);
+        // console.error(event);
       },
     );
     Notifications.events().registerNotificationReceivedForeground(

@@ -20,6 +20,7 @@ import BackgroundTimer from 'react-native-background-timer';
 
 import {schedulerBackground} from '~/utils/schedulerBackground';
 import moment from 'moment';
+import {convertToDateTime} from '~/utils/convertToDateTime';
 interface Props {
   task: TaskWithBackgroundId | null;
   onDeleteTask: (_id: string) => void;
@@ -33,24 +34,22 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
     if (task) {
       const date = task.start.date;
       const time = task.start.time;
-      const dateTime = new Date(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
-      const timestamp = dateTime.getTime();
-      if (!isEnable) {
-        const timer = state.user.level[task.type.title];
-        const backgroundId = schedulerBackground(
-          timer,
-          timestamp,
-          task.title,
-          t,
-        );
-        console.log('backgroundId', backgroundId);
-        dispatch(setBackgroundId(task._id, backgroundId));
+      if (date && time) {
+        const dateTime = convertToDateTime(date, time);
+        const timestamp = dateTime.getTime();
+        if (!isEnable) {
+          const timer = state.user.level[task.type.title];
+          const backgroundId = schedulerBackground(
+            timer,
+            timestamp,
+            task.title,
+            t,
+            task.type.title,
+            task._id,
+          );
+          console.log('backgroundId', backgroundId);
+          dispatch(setBackgroundId(task._id, backgroundId));
+        }
       } else {
         console.log('task.backgroundId', task.backgroundId);
         task.backgroundId?.forEach(x => {
@@ -127,9 +126,9 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   fontSize: 14,
                   fontWeight: 'bold',
                   color: 'black',
-                }}>{`${moment(task.start.date).format('DD-MM-YYYY')} - ${
-                task.start.time.hour
-              }:${task.start.time.minute}`}</Text>
+                }}>{`${moment(task.start.date).format('DD-MM-YYYY')} - ${moment(
+                task.start.time,
+              ).format('HH:mm')}`}</Text>
             </View>
           </View>
           <View>
@@ -156,9 +155,9 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   fontSize: 14,
                   fontWeight: 'bold',
                   color: 'black',
-                }}>{`${moment(task.end.date).format('DD-MM-YYYY')} - ${
-                task.end.time.hour
-              }:${task.end.time.minute}`}</Text>
+                }}>{`${moment(task.end.date).format('DD-MM-YYYY')} - ${moment(
+                task.end.time,
+              ).format('HH:mm')}`}</Text>
             </View>
           </View>
         </View>

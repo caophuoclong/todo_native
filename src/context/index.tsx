@@ -3,6 +3,10 @@ import Database from '~/utils/database';
 import {IUser, Language, Task, TaskWithBackgroundId} from '../interfaces';
 import {TaskType} from '../interfaces/index';
 import {Type} from './type';
+import BackgroundTimer from 'react-native-background-timer';
+import {schedulerBackground} from '../utils/schedulerBackground';
+import {convertToDateTime} from '~/utils/convertToDateTime';
+import i18n from '~/i18n';
 type Props = {
   children: React.ReactNode;
 };
@@ -16,6 +20,7 @@ interface initialState {
   user: IUser;
   lan: Language;
   sortType: 'asc' | 'desc';
+  channelId: string;
 }
 export const initialLevelNotify: {
   [key in TaskType['title']]: number[];
@@ -25,6 +30,7 @@ export const initialLevelNotify: {
   unimportant: [3, 0],
 };
 const initialValue: initialState = {
+  channelId: '',
   lan: 'vi',
   active: false,
   user: {
@@ -63,6 +69,7 @@ interface action {
 }
 
 export const emptyState: initialState = {
+  channelId: '',
   lan: 'vi',
   active: false,
   user: {
@@ -96,6 +103,12 @@ export const emptyState: initialState = {
 };
 const reducer = (state: initialState, action: action) => {
   switch (action.type) {
+    case Type.SET_CHANNEL_ID:
+      console.log(action);
+      return {
+        ...state,
+        channelId: 'default',
+      };
     case Type.UPDATE_LEVEL: {
       const {
         type,
@@ -200,19 +213,49 @@ const reducer = (state: initialState, action: action) => {
         ...state,
         taskCompleted: action.payload,
       };
-    case Type.SET_DONE:
-      return {
-        ...state,
-        tasks: state.tasks.map(task => {
-          if (task._id === action.payload) {
-            return {
-              ...task,
-              isDone: true,
-            };
+    case Type.SET_DONE: {
+      const {_id, isDone} = action.payload;
+      const tasks = [...state.tasks];
+      const task = tasks.find(item => item._id === _id);
+      console.log('220', isDone);
+      if (task) {
+        if (isDone) {
+          task.backgroundId?.forEach(id => {
+            BackgroundTimer.clearTimeout(id);
+          });
+          task.backgroundId = undefined;
+        } else {
+          const dateTime = convertToDateTime(
+            task.start.date!,
+            task.start.time!,
+          );
+          if (task.isAlert) {
+            const backgroundId = schedulerBackground(
+              state.user.level[task.type.title],
+              dateTime.getTime(),
+              task.title,
+              i18n.t,
+              task.type.title,
+              task._id,
+            );
+            task.backgroundId = backgroundId;
           }
-          return task;
-        }),
-      };
+        }
+        task.isDone = isDone;
+        console.log('task123', task);
+        return {
+          ...state,
+          tasks: tasks.map(item => {
+            if (item._id === task._id) {
+              return task;
+            }
+            return item;
+          }),
+        };
+      } else {
+        return state;
+      }
+    }
     case Type.SET_NO_DONE:
       return {
         ...state,

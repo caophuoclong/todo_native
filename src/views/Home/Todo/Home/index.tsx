@@ -27,13 +27,18 @@ import {useTranslation} from 'react-i18next';
 import {Notifications} from 'react-native-notifications';
 import BackgroundFetch from 'react-native-background-fetch';
 import {checkExpired} from '~/utils/checkExpired';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
+import {schedulerBackground} from '../../../../utils/schedulerBackground';
+import {setBackgroundId} from '../../../../context/actions/index';
+import {convertToDateTime} from '~/utils/convertToDateTime';
+
 interface Props {
   // showBottomSheet: boolean;
   // setShowBottomSheet: () => void;
   children?: React.ReactNode;
   navigation: any;
 }
-type TitleFilter =
+export type TitleFilter =
   | 'myDay'
   | 'important'
   | 'expired'
@@ -109,13 +114,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
           const date = task.start.date;
           const time = task.start.time;
           if (date && time) {
-            const dateTime = new Date(
-              date?.year,
-              date?.month,
-              date?.day,
-              time?.hour,
-              time?.minute,
-            );
+            const dateTime = convertToDateTime(date, time);
 
             return checkExpired(dateTime.getTime());
           } else {
@@ -146,8 +145,113 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       })();
     }, [state.user]);
 
+    // useEffect(() => {
+    //   (() => {
+    //     const tasks = state.tasks;
+    //     // check task undone
+    //     const taskUnDone = tasks.filter(task => !task.isDone);
+    //     // check task not alert
+    //     const taskAlert = taskUnDone.filter(task => task.isAlert);
+    //     taskAlert.forEach(task => {
+    //       const timer = state.user.level[task.type.title];
+    //       const date = task.start.date;
+    //       const time = task.start.time;
+    //       if (date && time) {
+    //         const dateTime = new Date(
+    //           date.year,
+    //           date.month,
+    //           date.day,
+    //           time.hour,
+    //           time.minute,
+    //         );
+    //         const backgroundId = schedulerBackground(
+    //           timer,
+    //           dateTime.getTime(),
+    //           task.title,
+    //           t,
+    //           task.type.title,
+    //           task._id,
+    //         );
+    //         dispatch(setBackgroundId(task._id, backgroundId));
+    //       }
+    //     });
+    //   })();
+    // }, [state.tasks]);
+
+    async function onDisplayNotification() {
+      console.log(123123);
+      // Request permissions (required for iOS)
+      await notifee.requestPermission();
+
+      // Create a channel (required for Android)
+      const channelId = await notifee.createChannel({
+        id: 'default',
+        name: 'Default Channel',
+        importance: AndroidImportance.HIGH,
+      });
+      // Display a notification
+      notifee.displayNotification({
+        title:
+          '<p style="color: #4caf50;"><b>Styled HTMLTitle</span></p></b></p> &#128576;',
+        subtitle: '&#129395;',
+        body: 'The <p style="text-decoration: line-through">body can</p> also be <p style="color: #ffffff; background-color: #9c27b0"><i>styled too</i></p> &#127881;!',
+        android: {
+          smallIcon: 'notification_icon',
+          channelId,
+          color: '#4caf50',
+          actions: [
+            {
+              title: '<b>View task</b> &#128111;',
+              pressAction: {
+                id: `viewTask_${'1667413906871'}`,
+                launchActivity: 'default',
+              },
+            },
+            {
+              title:
+                '<p style="color: #f44336;"><b>Make done</b> &#128557;</p>',
+              pressAction: {id: `makeDone_${'1667413906871'}`},
+            },
+          ],
+        },
+      });
+    }
+    // useEffect(() => {
+    //   notifee.onBackgroundEvent(async ({type, detail}) => {
+    //     // id include viewTask
+    //     if (
+    //       type === EventType.ACTION_PRESS &&
+    //       detail.pressAction?.id.includes('viewTask')
+    //     ) {
+    //       const taskId = detail.pressAction?.id.split('_')[1];
+    //       if (taskId) {
+    //       }
+    //       // const taskId = detail.id.split('_')[1];
+    //       // navigation.navigate('TaskDetail', {taskId});
+    //       console.log(
+    //         'User pressed an action with the id: ',
+    //         detail.pressAction.id,
+    //       );
+    //     }
+    //     if (type === EventType.ACTION_PRESS && detail.pressAction?.id) {
+    //       console.log(
+    //         'User pressed an action with the id1: ',
+    //         detail.pressAction.id,
+    //       );
+    //     }
+    //   });
+    // }, []);
+    const handleSetFilterSelected = (title: TitleFilter) => {
+      setFilterSelected(title);
+    };
     return (
       <View style={{backgroundColor: '#fff', flex: 1}}>
+        {/* <Button
+          title="Notify"
+          onPress={() => {
+            onDisplayNotification();
+          }}
+        /> */}
         <Greeting />
         <View style={{flex: 0.85}}>
           <ScrollView
@@ -162,7 +266,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
               <TouchableOpacity
                 key={i}
                 onPress={() => {
-                  setFilterSelected(f.title);
+                  handleSetFilterSelected(f.title);
                 }}
                 style={[
                   style.btnFilter,
@@ -189,7 +293,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
           </ScrollView>
         </View>
         <View style={{flex: 6}}>
-          <Tasks />
+          <Tasks handleSetFilterSelected={handleSetFilterSelected} />
           <Completed />
         </View>
         <CreateTask ref={ref} />

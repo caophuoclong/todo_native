@@ -22,24 +22,26 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       let locale = getLocale();
-      const data = JSON.parse(await Database._retriveData('user'));
-      const tasks = await Database._retriveData('tasks');
-      console.log(tasks);
-      const lan =
-        (await Database._retriveData('lan')) ||
-        (locale === 'en_US' && 'en') ||
-        (locale === 'vi_VN' && 'vi') ||
-        'vi';
-
-      if (tasks) {
-        dispatch(setTasks(JSON.parse(tasks)));
-      }
-      if (data) {
-        dispatch(setUser(data));
-      }
-      if (lan) {
-        dispatch(setLan(lan));
-        i18n.changeLanguage(lan);
+      try {
+        const data = await Database._retriveData('user');
+        const tasks = await Database._retriveData('tasks');
+        const lan =
+          (await Database._retriveData('lan')) ||
+          (locale === 'en_US' && 'en') ||
+          (locale === 'vi_VN' && 'vi') ||
+          'vi';
+        if (tasks) {
+          dispatch(setTasks(JSON.parse(tasks)));
+        }
+        if (data) {
+          dispatch(setUser(JSON.parse(data)));
+        }
+        if (lan) {
+          dispatch(setLan(lan));
+          i18n.changeLanguage(lan);
+        }
+      } catch (e) {
+        console.log(e);
       }
       SplashScreen.hide();
     })();

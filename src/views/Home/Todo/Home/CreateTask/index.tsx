@@ -27,6 +27,7 @@ import {PushNoti} from '~/utils/pushNoti';
 import {schedulerBackground} from '../../../../../utils/schedulerBackground';
 import {getLocale} from '../../../../../utils/getLocale';
 import _ from 'lodash';
+import {convertToDateTime} from '~/utils/convertToDateTime';
 
 interface Props {}
 export const taskType: Array<TaskType> = [
@@ -83,13 +84,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     const date = state.task.start.date;
     const time = state.task.start.time;
     if (date && time) {
-      const dateTime = new Date(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
+      const dateTime = convertToDateTime(date, time);
       if (date && time && _.isEmpty(state.task.end.time)) {
         const nextHour = new Date(dateTime.getTime() + 60 * 60 * 1000);
         dispatch(
@@ -123,16 +118,10 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     );
     // check if task is alert"MM-DD-YYYY HH:mm"
     let backgroundId: number[] = [];
-    const date = state.task.start.date;
-    const time = state.task.start.time;
+    const date = task.start.date;
+    const time = task.start.time;
     if (task.isAlert && date && time) {
-      const dateTime = new Date(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
+      const dateTime = convertToDateTime(date, time);
 
       const timer = state.user.level[task.type.title];
       backgroundId = schedulerBackground(
@@ -140,6 +129,8 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         dateTime.getTime(),
         task.title,
         t,
+        task.type.title,
+        task._id,
       );
     }
     task.backgroundId = backgroundId;
@@ -196,8 +187,9 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
                     (selected.title === 'normal' && {
                       backgroundColor: '#00BFFF',
                     }) ||
+                    //unimportant with gray color
                     (selected.title === 'unimportant' && {
-                      backgroundColor: '#008000',
+                      backgroundColor: '#808080',
                     })),
               ]}
               onPress={() => {
