@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Keyboard,
+  PermissionsAndroid,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import BottomSheet from '~/components/BottomSheet';
@@ -29,6 +30,8 @@ import {getLocale} from '../../../../../utils/getLocale';
 import _ from 'lodash';
 import {convertToDateTime} from '~/utils/convertToDateTime';
 import {dracula, snazzyLight} from '../../../../../constants/color';
+import notifee, {AuthorizationStatus} from '@notifee/react-native';
+import AppModal from '~/components/AppModal';
 
 interface Props {}
 export const taskType: Array<TaskType> = [
@@ -54,6 +57,9 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
     useState<boolean>(false);
   const [openTimePickerEnd, setOpenTimePickerEnd] = useState<boolean>(false);
   const [openDatePickerEnd, setOpenDatePickerEnd] = useState<boolean>(false);
+  const [showAppModal, setShowAppModal] = useState<boolean>(false);
+  const [showAppModalNeverAskAgain, setShowAppModalNeverAskAgain] =
+    useState<boolean>(false);
   // const [isDelete]
 
   const handleCancel = () => {
@@ -108,7 +114,7 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         isAlert: !state.task.isAlert,
       }),
     );
-  const handleSubmit = async () => {
+  const createTaskk = async () => {
     const _id = new Date().getTime().toString();
     const task = state.task;
     task._id = _id;
@@ -144,6 +150,33 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       // @ts-ignore
       ref.current.scrollTo(0);
     }
+  };
+  const handleSubmit = async () => {
+    // const isGranted = await PermissionsAndroid.check(
+    //   PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    // );
+    // console.log('158', isGranted);
+    // if (!isGranted) {
+    //   const x = await PermissionsAndroid.request(
+    //     PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    //   );
+    //   if (x === PermissionsAndroid.RESULTS.GRANTED) {
+    //     createTaskk();
+    //   } else if (x === PermissionsAndroid.RESULTS.DENIED) {
+    //     setShowAppModal(true);
+    //   } else {
+    //     setShowAppModalNeverAskAgain(true);
+    //   }
+    //   console.log(x);
+    //   // if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+    //   //   createTaskk();
+    //   // } else {
+    //   //   setShowAppModal(true);
+    //   // }
+    // } else {
+    //   createTaskk();
+    // }
+    createTaskk();
   };
   const {
     state: {
@@ -836,6 +869,45 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           setOpenTimePickerEnd(false);
         }}
       />
+
+      <AppModal
+        isVisible={showAppModal}
+        onClose={() => {
+          setShowAppModal(false);
+        }}
+        title={t('Permission')}
+        showCloseButton={true}>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 14,
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          }}>
+          {t('PermissionNotifyMessage')}
+        </Text>
+      </AppModal>
+      <AppModal
+        isVisible={showAppModalNeverAskAgain}
+        onClose={() => {
+          setShowAppModalNeverAskAgain(false);
+        }}
+        title={t('Permission')}
+        showCloseButton={true}>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 14,
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          }}>
+          {t('PermissionNeverAskAgainMessage')}
+        </Text>
+      </AppModal>
     </BottomSheet>
   );
 });

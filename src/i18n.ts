@@ -50,6 +50,11 @@ const resources = {
             SubtitleAutoChangeThme: "Base on system setting",
             ViewTask: "View Task",
             DoneTask: "Done Task",
+            Permission: "Permission",
+            PermissionNotifyMessage: "Please allow notification permission to use this app",
+            PleaseEnterYourName: "Please enter your name",
+            Error: "Error",
+            PermissionNeverAskAgainMessage: "Please go to setting to allow notification permission to use this app",
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `You have a task ${title} ${timer ? `in ${timer} minutes` : "now"}`;
             // }
@@ -104,7 +109,11 @@ const resources = {
             SubtitleAutoChangeThme: "Theo tùy chọn hệ thống",
             ViewTask: "Xem",
             DoneTask: "Xong",
-
+            Permission: "Quyền truy cập",
+            PermissionNotifyMessage: "Vui lòng cho phép quyền thông báo để sử dụng ứng dụng này",
+            PleaseEnterYourName: "Vui lòng nhập tên của bạn",
+            Error: "Lỗi",
+            PermissionNeverAskAgainMessage: "Vui lòng vào cài đặt để cho phép quyền thông báo để sử dụng ứng dụng này",
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `Bạn có công việc ${title} ${timer ? `trong ${timer} phút` : "bây giờ"}`;
             // }

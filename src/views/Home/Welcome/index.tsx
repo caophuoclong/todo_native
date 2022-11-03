@@ -21,6 +21,7 @@ import {setUser} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
 import {initialLevelNotify} from '../../../context/index';
 import {dracula, snazzyLight} from '~/constants/color';
+import AppModal from '~/components/AppModal';
 type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Home'>;
 };
@@ -147,13 +148,12 @@ export default function Welcome() {
           {t('GetStarted')}
         </Text>
       </Pressable>
-      <Notify
-        title="Please enter your name"
-        visible={modalVisible}
-        onHide={() => {
-          setModalVisible(!modalVisible);
-        }}
-      />
+      <AppModal
+        isVisible={modalVisible}
+        title={t('Error')}
+        onClose={() => setModalVisible(false)}>
+        <Text>{t('PleaseEnterYourName')}</Text>
+      </AppModal>
     </View>
   );
 }

@@ -25,6 +25,7 @@ import {ContextProvider} from '~/context';
 import Home from '~/views/Home';
 import {useTranslation} from 'react-i18next';
 import useAppContext from '~/hooks/useAppContext';
+import notifee from '@notifee/react-native';
 import {
   Notification,
   NotificationCompletion,
@@ -37,41 +38,67 @@ const Stack = createNativeStackNavigator<NavigationParamsList>();
 
 const App = () => {
   const {t} = useTranslation();
-  const color = useColorScheme();
   useEffect(() => {
-    PermissionsAndroid.requestMultiple([
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    ]).then(result => {
-      if (
-        result['android.permission.CAMERA'] &&
-        result['android.permission.READ_EXTERNAL_STORAGE'] &&
-        result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
-      ) {
-      } else if (
-        result['android.permission.CAMERA'] ||
-        result['android.permission.READ_EXTERNAL_STORAGE'] ||
-        result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-          'never_ask_again'
-      ) {
-        Alert.alert(
-          'Please Go into Settings -> Applications -> APP_NAME -> Permissions and Allow permissions to continue',
-        );
-      } else {
-      }
-    });
+    // check post notificatio in granted
+    // const checkPermission = async () => {
+    //   const granted = await PermissionsAndroid.check(
+    //     PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    //   );
+    //   if (!granted) {
+    //     Alert.alert(
+    //       t('permission'),
+    //       t('permission_message'),
+    //       [
+    //         {
+    //           text: t('cancel'),
+    //           onPress: () => console.log('Cancel Pressed'),
+    //           style: 'cancel',
+    //         },
+    //         {
+    //           text: t('ok'),
+    //           onPress: () => {
+    //             PermissionsAndroid.request(
+    //               PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    //             );
+    //           },
+    //         },
+    //       ],
+    //       {cancelable: false},
+    //     );
+    //   }
+    // };
+    // checkPermission();
+    // (async () => {
+    //   await notifee.requestPermission();
+    // })();
+    // PermissionsAndroid.requestMultiple([
+    //   PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    //   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    //   PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    // ]);
+    // PermissionsAndroid.requestMultiple([
+    //   PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    //   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    //   PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+    // ]).then(result => {
+    //   if (
+    //     result['android.permission.POST_NOTIFICATIONS'] &&
+    //     result['android.permission.READ_EXTERNAL_STORAGE'] &&
+    //     result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
+    //   ) {
+    //   } else if (
+    //     result['android.permission.POST_NOTIFICATIONS'] ||
+    //     result['android.permission.READ_EXTERNAL_STORAGE'] ||
+    //     result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+    //       'never_ask_again'
+    //   ) {
+    //     Alert.alert(
+    //       'Please Go into Settings -> Applications -> APP_NAME -> Permissions and Allow permissions to continue',
+    //     );
+    //   } else {
+    //   }
+    // });
   }, []);
-  // useEffect(() => {
-  //   const {baseOnSystem} = state.systemSetting;
-  //   console.log('App.tsx');
-  //   Appearance.addChangeListener(({colorScheme}) => {
-  //     if (baseOnSystem) {
-  //       console.log('colorScheme', colorScheme);
-  //       dispatch(setColorScheme(colorScheme));
-  //     }
-  //   });
-  // }, [state.systemSetting.baseOnSystem]);
 
   useEffect(() => {
     Notifications.registerRemoteNotifications();
@@ -112,6 +139,7 @@ const App = () => {
               component={Setting}
               options={{
                 headerShown: true,
+
                 title: t('Setting'),
               }}
             />

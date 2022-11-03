@@ -67,7 +67,7 @@ const AppModal: React.FC<Props> = ({
             style={{
               marginTop: 10,
               backgroundColor:
-                colorScheme === 'dark' ? snazzyLight.cyan : dracula.cyan,
+                colorScheme === 'dark' ? dracula.cyan : snazzyLight.cyan,
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 10,
