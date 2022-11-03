@@ -172,14 +172,22 @@ export default function Tasks({handleSetFilterSelected}: Props) {
               <MaterialIcon
                 name="sort-clock-descending"
                 size={24}
-                color="black"
+                color={
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground
+                }
               />
             ) : null}
             {state.sortType === 'asc' ? (
               <MaterialIcon
                 name="sort-clock-ascending"
                 size={24}
-                color="black"
+                color={
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground
+                }
               />
             ) : null}
           </TouchableOpacity>

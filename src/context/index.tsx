@@ -244,7 +244,6 @@ const reducer = (state: initialState, action: action): initialState => {
       const {_id, isDone} = action.payload;
       const tasks = [...state.tasks];
       const task = tasks.find(item => item._id === _id);
-      console.log('220', isDone);
       if (task) {
         if (isDone) {
           task.backgroundId?.forEach(id => {
@@ -269,7 +268,6 @@ const reducer = (state: initialState, action: action): initialState => {
           }
         }
         task.isDone = isDone;
-        console.log('task123', task);
         return {
           ...state,
           tasks: tasks.map(item => {

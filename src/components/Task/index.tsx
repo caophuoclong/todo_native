@@ -72,6 +72,11 @@ const Task: React.FC<
               style={{
                 marginRight: 2,
               }}
+              color={
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground
+              }
             />
             <Text
               style={{

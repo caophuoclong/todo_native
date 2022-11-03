@@ -53,13 +53,13 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
           );
           console.log('backgroundId', backgroundId);
           dispatch(setBackgroundId(task._id, backgroundId));
+        } else {
+          console.log('task.backgroundId', task.backgroundId);
+          task.backgroundId?.forEach(x => {
+            BackgroundTimer.clearTimeout(x);
+          });
+          dispatch(setBackgroundId(task._id, []));
         }
-      } else {
-        console.log('task.backgroundId', task.backgroundId);
-        task.backgroundId?.forEach(x => {
-          BackgroundTimer.clearTimeout(x);
-        });
-        dispatch(setBackgroundId(task._id, []));
       }
       dispatch(setAlert({_id: task._id, enable: !task.isAlert}));
     }
@@ -146,7 +146,15 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <Icon name="date" size={24} />
+              <Icon
+                name="date"
+                size={24}
+                color={
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground
+                }
+              />
               <Text
                 style={{
                   marginLeft: 10,
@@ -182,7 +190,15 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <Icon name="date" size={24} />
+              <Icon
+                name="date"
+                size={24}
+                color={
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground
+                }
+              />
               <Text
                 style={{
                   marginLeft: 10,

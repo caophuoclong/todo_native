@@ -79,15 +79,15 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
         description: 'All',
       },
     ]);
-    useEffect(() => {
-      const filterSelectedIndex = filter.findIndex(
-        item => item.title === filterSelected,
-      );
-      const newFilter = [...filter];
-      newFilter[0] = filter[filterSelectedIndex];
-      newFilter[filterSelectedIndex] = filter[0];
-      setFilter(newFilter);
-    }, [filterSelected]);
+    // useEffect(() => {
+    //   const filterSelectedIndex = filter.findIndex(
+    //     item => item.title === filterSelected,
+    //   );
+    //   const newFilter = [...filter];
+    //   newFilter[0] = filter[filterSelectedIndex];
+    //   newFilter[filterSelectedIndex] = filter[0];
+    //   setFilter(newFilter);
+    // }, [filterSelected]);
     useEffect(() => {
       const {tasks} = state;
       if (filterSelected === 'myDay') {
@@ -104,10 +104,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
               time?.minute,
             );
 
-            return (
-              !checkExpired(dateTime.getTime()) &&
-              moment(dateTime).isSame(today, 'day')
-            );
+            return moment(dateTime).isSame(today, 'day');
           } else {
             return true;
           }
@@ -214,14 +211,14 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
             {
               title: '<b>View task</b> &#128111;',
               pressAction: {
-                id: `viewTask_${'1667449372810'}`,
+                id: `viewTask_${'1667494471863'}`,
                 launchActivity: 'default',
               },
             },
             {
               title:
                 '<p style="color: #f44336;"><b>Make done</b> &#128557;</p>',
-              pressAction: {id: `makeDone_${'1667413906871'}`},
+              pressAction: {id: `makeDone_${'1667494471863'}`},
             },
           ],
         },

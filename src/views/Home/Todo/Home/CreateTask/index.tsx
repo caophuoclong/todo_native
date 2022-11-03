@@ -94,17 +94,38 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       const dateTime = convertToDateTime(date, time);
       if (date && time && _.isEmpty(state.task.end.time)) {
         const nextHour = new Date(dateTime.getTime() + 60 * 60 * 1000);
-        dispatch(
-          setTask({
-            end: {
-              ...state.task.end,
-              time: {
-                hour: nextHour.getHours(),
-                minute: nextHour.getMinutes(),
+        // check date end equal date start
+        console.log(nextHour);
+        if (moment(nextHour).isSame(dateTime, 'day')) {
+          dispatch(
+            setTask({
+              end: {
+                ...state.task.end,
+                time: {
+                  hour: nextHour.getHours(),
+                  minute: nextHour.getMinutes(),
+                },
               },
-            },
-          }),
-        );
+            }),
+          );
+        } else {
+          const nextDate = moment(dateTime).add(1, 'day');
+          dispatch(
+            setTask({
+              end: {
+                date: {
+                  day: nextDate.date(),
+                  month: nextDate.month(),
+                  year: nextDate.year(),
+                },
+                time: {
+                  hour: nextHour.getHours(),
+                  minute: nextHour.getMinutes(),
+                },
+              },
+            }),
+          );
+        }
       }
     }
   }, [state.task.start.time]);
