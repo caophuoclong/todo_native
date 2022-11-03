@@ -28,6 +28,7 @@ import {schedulerBackground} from '../../../../../utils/schedulerBackground';
 import {getLocale} from '../../../../../utils/getLocale';
 import _ from 'lodash';
 import {convertToDateTime} from '~/utils/convertToDateTime';
+import {dracula, snazzyLight} from '../../../../../constants/color';
 
 interface Props {}
 export const taskType: Array<TaskType> = [
@@ -144,11 +145,20 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       ref.current.scrollTo(0);
     }
   };
+  const {
+    state: {
+      systemSetting: {colorScheme},
+    },
+  } = useAppContext();
   // console.log(timePress);
   return (
     <BottomSheet ref={ref}>
       <Text
         style={{
+          color:
+            colorScheme === 'dark'
+              ? dracula.foreground
+              : snazzyLight.foreground,
           textAlign: 'center',
           fontSize: 30,
           marginVertical: 5,
@@ -158,11 +168,38 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
       </Text>
 
       <View style={style.box}>
-        <Text style={style.title}>{t('TaskTitle')}</Text>
+        <Text
+          style={[
+            style.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
+          {t('TaskTitle')}
+        </Text>
         <TextInput
-          style={style.inpTaskTitle}
+          style={[
+            style.inpTaskTitle,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+            {
+              backgroundColor:
+                colorScheme === 'dark' ? dracula.white : snazzyLight.white,
+            },
+          ]}
           placeholder={t('TaskTitlePlaceholder')}
-          placeholderTextColor={'#E1E0E5'}
+          placeholderTextColor={
+            colorScheme === 'dark'
+              ? dracula.placeHolder
+              : snazzyLight.placeHolder
+          }
           value={state.task.title}
           onChangeText={text => {
             dispatch(setTask({title: text}));
@@ -170,7 +207,18 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         />
       </View>
       <View style={style.box}>
-        <Text style={style.title}>{t('TaskLevel')}</Text>
+        <Text
+          style={[
+            style.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
+          {t('TaskLevel')}
+        </Text>
         <ScrollView
           showsHorizontalScrollIndicator={false}
           horizontal={true}
@@ -180,17 +228,35 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               key={index}
               style={[
                 style.taskType,
-                selected.title === item.title &&
-                  ((selected.title === 'important' && {
-                    backgroundColor: '#FF0000',
-                  }) ||
-                    (selected.title === 'normal' && {
-                      backgroundColor: '#00BFFF',
+                {
+                  backgroundColor:
+                    colorScheme === 'dark'
+                      ? dracula.whiteGray
+                      : snazzyLight.white,
+                },
+                colorScheme === 'dark'
+                  ? selected.title === item.title &&
+                    ((selected.title === 'important' && {
+                      backgroundColor: snazzyLight.red,
                     }) ||
-                    //unimportant with gray color
-                    (selected.title === 'unimportant' && {
-                      backgroundColor: '#808080',
-                    })),
+                      (selected.title === 'normal' && {
+                        backgroundColor: snazzyLight.cyan,
+                      }) ||
+                      //unimportant with gray color
+                      (selected.title === 'unimportant' && {
+                        backgroundColor: dracula.whiteGray,
+                      }))
+                  : selected.title === item.title &&
+                    ((selected.title === 'important' && {
+                      backgroundColor: dracula.red,
+                    }) ||
+                      (selected.title === 'normal' && {
+                        backgroundColor: snazzyLight.cyan,
+                      }) ||
+                      //unimportant with gray color
+                      (selected.title === 'unimportant' && {
+                        backgroundColor: dracula.whiteGray,
+                      })),
               ]}
               onPress={() => {
                 dispatch(setTask({type: item}));
@@ -198,7 +264,15 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
               <Text
                 style={[
                   style.text,
-                  selected.title === item.title && {color: '#fff'},
+                  {
+                    color:
+                      colorScheme === 'dark'
+                        ? dracula.foreground
+                        : snazzyLight.foreground,
+                  },
+                  selected.title === item.title && {
+                    color: dracula.foreground,
+                  },
                 ]}>
                 {t(item.name)}
               </Text>
@@ -207,7 +281,18 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         </ScrollView>
       </View>
       <View style={style.box}>
-        <Text style={style.title}>{t('Choose_DateTimeStart')}</Text>
+        <Text
+          style={[
+            style.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
+          {t('Choose_DateTimeStart')}
+        </Text>
         <View
           style={{
             flexDirection: 'row',
@@ -220,16 +305,54 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             }}
             onPress={() => setOpenDatePickerStart(true)}>
             {state.task.start.date !== null ? (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="calendar" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {moment(state.task.start.date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             ) : (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="calendar" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {t('SelectDate')}
                 </Text>
               </View>
@@ -242,17 +365,54 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             }}
             onPress={() => setOpenTimePickerStart(true)}>
             {state.task.start.time !== null ? (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="clockcircleo" size={24} />
-
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {`${moment(state.task.start.time).format('HH:mm')}`}
                 </Text>
               </View>
             ) : (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="clockcircleo" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {t('SelectTime')}
                 </Text>
               </View>
@@ -261,7 +421,18 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         </View>
       </View>
       <View style={style.box}>
-        <Text style={style.title}>{t('Choose_DateTimeEnd')}</Text>
+        <Text
+          style={[
+            style.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
+          {t('Choose_DateTimeEnd')}
+        </Text>
         <View
           style={{
             flexDirection: 'row',
@@ -274,17 +445,55 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             }}
             onPress={() => setOpenDatePickerEnd(true)}>
             {state.task.end.date !== null ? (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="calendar" size={24} />
 
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {moment(state.task.end.date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             ) : (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="calendar" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {' '}
                   {t('SelectDate')}
                 </Text>
@@ -298,17 +507,55 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             }}
             onPress={() => setOpenTimePickerEnd(true)}>
             {state.task.end.time !== null ? (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="clockcircleo" size={24} />
 
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {`${moment(state.task.end.time).format('HH:mm')}`}
                 </Text>
               </View>
             ) : (
-              <View style={style.btnIcon}>
+              <View
+                style={[
+                  style.btnIcon,
+                  {
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
+                  },
+                ]}>
                 <AntIcon name="clockcircleo" size={24} />
-                <Text style={[style.text, {marginLeft: 10}]}>
+                <Text
+                  style={[
+                    style.text,
+                    {
+                      color:
+                        colorScheme === 'dark'
+                          ? dracula.foreground
+                          : snazzyLight.foreground,
+                    },
+                    {marginLeft: 10},
+                  ]}>
                   {' '}
                   {t('SelectTime')}
                 </Text>
@@ -318,10 +565,24 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
         </View>
       </View>
       <View>
-        <Text style={style.title}>
+        <Text
+          style={[
+            style.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
           {t('Description')} ({t('Optional')})
         </Text>
         <TextInput
+          placeholderTextColor={
+            colorScheme === 'dark'
+              ? dracula.placeHolder
+              : snazzyLight.placeHolder
+          }
           value={state.task.description}
           onContentSizeChange={e => {
             setInputDesHeight(e.nativeEvent.contentSize.height);
@@ -341,6 +602,16 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           }}
           style={[
             style.inpTaskTitle,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+            {
+              backgroundColor:
+                colorScheme === 'dark' ? dracula.white : snazzyLight.white,
+            },
             {
               fontSize: 16,
               textAlignVertical: 'top',
@@ -366,7 +637,10 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           style={{
             fontSize: 16,
             fontWeight: 'bold',
-            color: 'black',
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
           }}>
           {t('GetAlert')}
         </Text>
@@ -386,16 +660,21 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
           style={[
             style.btn,
             {
-              backgroundColor: '#fff',
+              backgroundColor:
+                colorScheme === 'dark' ? dracula.white : snazzyLight.white,
               borderWidth: 1,
               // Secondary color
-              borderColor: '#FC94A0',
+              borderColor:
+                colorScheme === 'dark' ? snazzyLight.pink : dracula.pink,
             },
           ]}
           onPress={handleCancel}>
           <Text
             style={{
-              color: '#000',
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
               fontSize: 20,
               fontWeight: 'bold',
               textAlign: 'center',
@@ -409,7 +688,13 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
             _.isEmpty(state.task.start) ||
             _.isEmpty(state.task.end)
           }
-          style={[style.btn, style.btnSubmit]}
+          style={[
+            style.btn,
+            {
+              backgroundColor:
+                colorScheme === 'dark' ? snazzyLight.pink : dracula.pink,
+            },
+          ]}
           onPress={handleSubmit}>
           <Text
             style={{
@@ -555,7 +840,6 @@ const CreateTask = React.forwardRef<BottomSheetPropsRef, Props>(({}, ref) => {
   );
 });
 const PRIMARY_COLOR = '#593DA6';
-const SECONDARY_COLOR = '#FC94A0';
 const style = StyleSheet.create({
   tasks: {
     flex: 3,
@@ -581,9 +865,7 @@ const style = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 10,
   },
-  btnSubmit: {
-    backgroundColor: SECONDARY_COLOR,
-  },
+
   btnIcon: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -605,15 +887,12 @@ const style = StyleSheet.create({
     marginVertical: 5,
   },
   box: {
-    backgroundColor: 'white',
     marginBottom: 10,
   },
 
   inpTaskTitle: {
     borderRadius: 10,
-    backgroundColor: '#F6F8FA',
     padding: 10,
-    color: 'gray',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -621,7 +900,6 @@ const style = StyleSheet.create({
     },
     shadowOpacity: 0.01,
     shadowRadius: 2.22,
-
     elevation: 2,
   },
   taskType: {

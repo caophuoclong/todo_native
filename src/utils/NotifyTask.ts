@@ -1,4 +1,5 @@
 import notifee, {AndroidImportance} from '@notifee/react-native';
+import i18n from '~/i18n';
 import {TaskType} from '~/interfaces';
 import {capitalizeFirstLetter} from './capitalizeFirstLetter';
 export const colorPerType: {
@@ -20,6 +21,7 @@ export const NotifyTask = async (
   type: TaskType['title'],
   _id: string,
 ) => {
+  const {t} = i18n;
   await notifee.requestPermission();
 
   // Create a channel (required for Android)
@@ -43,14 +45,14 @@ export const NotifyTask = async (
       color: '#4caf50',
       actions: [
         {
-          title: '<b>View task</b> &#128111;',
+          title: `<b>${t("ViewTask")}</b>`,
               pressAction: {
                 id: `viewTask_${_id}`,
                 launchActivity: 'default',
             },
         },
         {
-          title: '<p style="color: #f44336;"><b>Make done</b> &#128557;</p>',
+          title: `<b>${t("DoneTask")}</b>`,
           pressAction: {id: `makeDone_${_id}`},
         },
       ],

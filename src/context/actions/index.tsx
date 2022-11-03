@@ -2,6 +2,19 @@ import {IUser, Task, TaskType, TaskWithBackgroundId} from '~/interfaces';
 import {emptyState} from '..';
 import {Type} from '../type';
 import {Language} from '../../interfaces/index';
+import {ColorSchemeName} from 'react-native';
+export const setSystemSetting = (value: boolean) => ({
+  type: Type.SET_SYSTEM_SETTING,
+  payload: value,
+});
+export const setBaseOnSystem = (value: boolean) => ({
+  type: Type.SET_BASE_ON_SYSTEM,
+  payload: value,
+});
+export const setColorScheme = (colorScheme: ColorSchemeName) => ({
+  type: Type.SET_COLOR_SCHEME,
+  payload: colorScheme,
+});
 export const setChannelId = (channelId: string) => ({
   type: Type.SET_CHANNEL_ID,
   payload: channelId,

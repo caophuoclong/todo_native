@@ -6,6 +6,7 @@ import {Task as ITask} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
 import {setDone, setNoDone} from '~/context/actions';
 import moment from 'moment';
+import {dracula, snazzyLight} from '../../constants/color';
 
 const Task: React.FC<
   ITask & {
@@ -23,15 +24,19 @@ const Task: React.FC<
   handleSetDone,
 }) => {
   const {state, dispatch} = useAppContext();
-
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   return (
     <TouchableOpacity
-      disabled={
-        (description && description.length > 0) || handleTaskPress === undefined
-          ? true
-          : false
-      }
-      style={style.container}
+      disabled={handleTaskPress === undefined ? true : false}
+      style={[
+        style.container,
+        {
+          backgroundColor:
+            colorScheme === 'dark' ? dracula.white : snazzyLight.white,
+        },
+      ]}
       onPress={() => {
         if (handleTaskPress) {
           handleTaskPress(_id);
@@ -51,6 +56,12 @@ const Task: React.FC<
                 textDecorationLine: 'line-through',
                 textDecorationStyle: 'solid',
               },
+              {
+                color:
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground,
+              },
             ]}>
             {title}
           </Text>
@@ -66,6 +77,10 @@ const Task: React.FC<
               style={{
                 fontSize: 16,
                 fontWeight: '500',
+                color:
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground,
               }}>
               {moment(start.time).format('HH:mm')}
             </Text>
@@ -81,6 +96,10 @@ const Task: React.FC<
               style={{
                 fontSize: 16,
                 fontWeight: '500',
+                color:
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground,
               }}>
               {moment(end.time).format('HH:mm')}
             </Text>
@@ -97,7 +116,16 @@ const Task: React.FC<
         style={{
           marginVertical: 10,
         }}>
-        <Text numberOfLines={2}>{description}</Text>
+        <Text
+          numberOfLines={2}
+          style={{
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          }}>
+          {description}
+        </Text>
       </View>
     </TouchableOpacity>
   );

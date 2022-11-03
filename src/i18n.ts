@@ -43,6 +43,13 @@ const resources = {
             Expired: "Expired",
             Delete: "Delete",
             SetTimeToNotify: "Set time to notify",
+            Theme: "Theme",
+            AutoChangeTheme: "Auto change theme",
+            Light: "Light",
+            Dark: "Dark",
+            SubtitleAutoChangeThme: "Base on system setting",
+            ViewTask: "View Task",
+            DoneTask: "Done Task",
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `You have a task ${title} ${timer ? `in ${timer} minutes` : "now"}`;
             // }
@@ -90,6 +97,14 @@ const resources = {
             Expired: "Hết hạn",
             Delete: "Xóa",
             SetTimeToNotify: "Thiết lập thời gian thông báo",
+            Theme: "Giao diện",
+            AutoChangeTheme: "Tự động thay đổi giao diện",
+            Light: "Sáng",
+            Dark: "Tối",
+            SubtitleAutoChangeThme: "Theo tùy chọn hệ thống",
+            ViewTask: "Xem",
+            DoneTask: "Xong",
+
             // MessageNotify: (title: string, timer?: number)=>{
             //   return `Bạn có công việc ${title} ${timer ? `trong ${timer} phút` : "bây giờ"}`;
             // }

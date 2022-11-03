@@ -20,6 +20,7 @@ import useAppContext from '~/hooks/useAppContext';
 import {setUser} from '~/context/actions';
 import {useTranslation} from 'react-i18next';
 import {initialLevelNotify} from '../../../context/index';
+import {dracula, snazzyLight} from '~/constants/color';
 type Props = {
   navigation: StackNavigationProp<NavigationParamsList, 'Home'>;
 };
@@ -29,8 +30,10 @@ export default function Welcome() {
   const {state, dispatch} = useAppContext();
   const [modalVisible, setModalVisible] = React.useState(false);
   const {t} = useTranslation();
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   const handleSubmit = async () => {
-    console.log(123123123);
     console.log(name);
     if (name.length > 0) {
       const user: IUser = {
@@ -44,19 +47,77 @@ export default function Welcome() {
     }
   };
   return (
-    <View style={[style.container]}>
+    <View
+      style={[
+        style.container,
+        {
+          backgroundColor:
+            colorScheme === 'dark'
+              ? dracula.background
+              : snazzyLight.background,
+        },
+      ]}>
       <Image
         style={{
           marginBottom: 50,
         }}
         source={require('../../../assets/images/test1.png')}
       />
-      <Text style={style.title}>{t('WelcomeTo')} Todo</Text>
-      <Text style={style.subTitle}>
+      <Text
+        style={[
+          style.title,
+          {
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          },
+        ]}>
+        {t('WelcomeTo')} Todo
+      </Text>
+      <Text
+        style={[
+          style.subTitle,
+          {
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          },
+        ]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet.
       </Text>
       <TextInput
-        style={CommonStyles.input}
+        style={[
+          {
+            width: '70%',
+            textAlign: 'center',
+            borderRadius: 10,
+            padding: 10,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.01,
+            shadowRadius: 2.22,
+            elevation: 2,
+            marginVertical: 10,
+          },
+          {
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
+          },
+          {
+            backgroundColor:
+              colorScheme === 'dark' ? dracula.white : snazzyLight.white,
+          },
+        ]}
+        placeholderTextColor={
+          colorScheme === 'dark' ? dracula.placeHolder : snazzyLight.placeHolder
+        }
         value={name}
         onChangeText={text => setName(text)}
         onKeyPress={async e => {
@@ -66,11 +127,22 @@ export default function Welcome() {
         }}
         placeholder={t('EnterYourName')}
       />
-      <Pressable style={style.button} onPress={handleSubmit}>
+      <Pressable
+        style={[
+          style.button,
+          {
+            backgroundColor:
+              colorScheme === 'dark' ? snazzyLight.orange : dracula.orange,
+          },
+        ]}
+        onPress={handleSubmit}>
         <Text
           style={{
             fontSize: 30,
-            color: 'white',
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
           }}>
           {t('GetStarted')}
         </Text>
@@ -109,7 +181,6 @@ const style = StyleSheet.create({
     flex: 1,
     paddingTop: 100,
     alignItems: 'center',
-    backgroundColor: '#fff',
     gap: 10,
   },
   button: {
@@ -119,6 +190,6 @@ const style = StyleSheet.create({
     borderRadius: 10,
     width: '70%',
     alignItems: 'center',
-    marginTop: 100,
+    marginTop: 90,
   },
 });

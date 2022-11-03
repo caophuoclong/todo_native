@@ -6,11 +6,15 @@ import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 import {convertToDateTime} from '~/utils/convertToDateTime';
 import {setDone} from '~/context/actions';
+import {dracula, snazzyLight} from '~/constants/color';
 
 export default function Completed() {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
-  const {taskCompleted} = state;
+  const {
+    systemSetting: {colorScheme},
+    taskCompleted,
+  } = state;
   taskCompleted.sort((a, b) => {
     if (a.start.date && b.start.date && a.start.time && b.start.time) {
       return (
@@ -34,7 +38,10 @@ export default function Completed() {
         style={{
           fontSize: 16,
           fontWeight: 'bold',
-          color: '#221B3D',
+          color:
+            colorScheme === 'dark'
+              ? dracula.foreground
+              : snazzyLight.foreground,
         }}>
         {t('Completed')}
       </Text>

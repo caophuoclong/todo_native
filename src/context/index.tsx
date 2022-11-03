@@ -1,6 +1,12 @@
 import React, {useReducer} from 'react';
 import Database from '~/utils/database';
-import {IUser, Language, Task, TaskWithBackgroundId} from '../interfaces';
+import {
+  initialState,
+  IUser,
+  Language,
+  Task,
+  TaskWithBackgroundId,
+} from '../interfaces';
 import {TaskType} from '../interfaces/index';
 import {Type} from './type';
 import BackgroundTimer from 'react-native-background-timer';
@@ -11,17 +17,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-interface initialState {
-  active: boolean;
-  task: TaskWithBackgroundId;
-  tasks: Array<TaskWithBackgroundId>;
-  tasksFiltered: Array<TaskWithBackgroundId>;
-  taskCompleted: Array<TaskWithBackgroundId>;
-  user: IUser;
-  lan: Language;
-  sortType: 'asc' | 'desc';
-  channelId: string;
-}
 export const initialLevelNotify: {
   [key in TaskType['title']]: number[];
 } = {
@@ -31,7 +26,6 @@ export const initialLevelNotify: {
 };
 const initialValue: initialState = {
   channelId: '',
-  lan: 'vi',
   active: false,
   user: {
     name: '',
@@ -61,6 +55,11 @@ const initialValue: initialState = {
   tasksFiltered: [],
   taskCompleted: [],
   sortType: 'desc',
+  systemSetting: {
+    colorScheme: 'light',
+    baseOnSystem: true,
+    lan: 'vi',
+  },
 };
 
 interface action {
@@ -70,7 +69,6 @@ interface action {
 
 export const emptyState: initialState = {
   channelId: '',
-  lan: 'vi',
   active: false,
   user: {
     name: '',
@@ -100,9 +98,35 @@ export const emptyState: initialState = {
   tasksFiltered: [],
   taskCompleted: [],
   sortType: 'desc',
+  systemSetting: {
+    colorScheme: 'light',
+    baseOnSystem: true,
+    lan: 'vi',
+  },
 };
-const reducer = (state: initialState, action: action) => {
+const reducer = (state: initialState, action: action): initialState => {
   switch (action.type) {
+    case Type.SET_SYSTEM_SETTING:
+      return {
+        ...state,
+        systemSetting: action.payload,
+      };
+    case Type.SET_BASE_ON_SYSTEM:
+      return {
+        ...state,
+        systemSetting: {
+          ...state.systemSetting,
+          baseOnSystem: action.payload,
+        },
+      };
+    case Type.SET_COLOR_SCHEME:
+      return {
+        ...state,
+        systemSetting: {
+          ...state.systemSetting,
+          colorScheme: action.payload,
+        },
+      };
     case Type.SET_CHANNEL_ID:
       console.log(action);
       return {
@@ -162,7 +186,10 @@ const reducer = (state: initialState, action: action) => {
     case Type.SET_LAN:
       return {
         ...state,
-        lan: action.payload,
+        systemSetting: {
+          ...state.systemSetting,
+          lan: action.payload,
+        },
       };
     case Type.CLEAR_DATA:
       return emptyState;

@@ -13,24 +13,17 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, type PropsWithChildren} from 'react';
 import {
   Alert,
-  NativeModules,
   PermissionsAndroid,
-  Platform,
   StatusBar,
   useColorScheme,
 } from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-import {IUser, NavigationParamsList} from './src/interfaces/index';
-import Splash from '~/views/Splash';
+import {NavigationParamsList} from './src/interfaces/index';
 import Setting from '~/views/Setting';
 import {ContextProvider} from '~/context';
 import Home from '~/views/Home';
-import i18n from '~/i18n';
-import Database from '~/utils/database';
 import {useTranslation} from 'react-i18next';
-import SplashScreen from 'react-native-splash-screen';
-import {setLan, setTasks, setUser} from '~/context/actions';
 import useAppContext from '~/hooks/useAppContext';
 import {
   Notification,
@@ -43,9 +36,8 @@ import {
 const Stack = createNativeStackNavigator<NavigationParamsList>();
 
 const App = () => {
-  const {state, dispatch} = useAppContext();
   const {t} = useTranslation();
-  const isDarkMode = useColorScheme() === 'dark';
+  const color = useColorScheme();
   useEffect(() => {
     PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
@@ -70,6 +62,17 @@ const App = () => {
       }
     });
   }, []);
+  // useEffect(() => {
+  //   const {baseOnSystem} = state.systemSetting;
+  //   console.log('App.tsx');
+  //   Appearance.addChangeListener(({colorScheme}) => {
+  //     if (baseOnSystem) {
+  //       console.log('colorScheme', colorScheme);
+  //       dispatch(setColorScheme(colorScheme));
+  //     }
+  //   });
+  // }, [state.systemSetting.baseOnSystem]);
+
   useEffect(() => {
     Notifications.registerRemoteNotifications();
     Notifications.events().registerRemoteNotificationsRegistered(
@@ -98,7 +101,6 @@ const App = () => {
   return (
     <ContextProvider>
       <GestureHandlerRootView style={{flex: 1}}>
-        <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{

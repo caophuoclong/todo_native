@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {clearData as clearStoreData} from '~/context/actions';
 import {CommonStyles} from '~/styles';
 import {useTranslation} from 'react-i18next';
+import AppPressable from '~/components/AppPressable';
 const ClearData = ({navigation}: {navigation: any}) => {
   const {state, dispatch} = useAppContext();
   const {t} = useTranslation();
@@ -15,17 +16,10 @@ const ClearData = ({navigation}: {navigation: any}) => {
     navigation.navigate('Home');
   };
   return (
-    <Pressable
+    <AppPressable
       onPress={clearData}
-      style={({pressed}) => [
-        {
-          backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
-        },
-        CommonStyles.settingButton,
-      ]}>
-      <Icon name="clear" size={24} color="black" />
-      <Text style={CommonStyles.settingTitle}>{t('ClearData')}</Text>
-    </Pressable>
+      title={t('ClearData')}
+      icon={<Icon name="clear" size={24} color="#E0144C" />}></AppPressable>
   );
 };
 

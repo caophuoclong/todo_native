@@ -1,12 +1,17 @@
-import {View, Text, StyleProp, TextStyle} from 'react-native';
+import {View, Text, StyleProp, TextStyle, TouchableOpacity} from 'react-native';
 import React from 'react';
 import Modal from 'react-native-modal';
+import useAppContext from '~/hooks/useAppContext';
+import {dracula} from '~/constants/color';
+import {snazzyLight} from '../../constants/color';
+import {useTranslation} from 'react-i18next';
 interface Props {
   isVisible: boolean;
   onClose: () => void;
   children?: React.ReactNode;
   title: string;
   titleStyle?: StyleProp<TextStyle>;
+  showCloseButton?: boolean;
 }
 const AppModal: React.FC<Props> = ({
   isVisible,
@@ -14,7 +19,14 @@ const AppModal: React.FC<Props> = ({
   children,
   title,
   titleStyle,
+  showCloseButton = false,
 }) => {
+  const {
+    state: {
+      systemSetting: {colorScheme},
+    },
+  } = useAppContext();
+  const {t} = useTranslation();
   return (
     <Modal
       testID={'modal'}
@@ -27,7 +39,8 @@ const AppModal: React.FC<Props> = ({
       onBackButtonPress={onClose}>
       <View
         style={{
-          backgroundColor: 'white',
+          backgroundColor:
+            colorScheme === 'dark' ? dracula.white : snazzyLight.white,
           padding: 22,
           //   alignItems: 'center',
           borderRadius: 4,
@@ -38,13 +51,31 @@ const AppModal: React.FC<Props> = ({
             {
               fontSize: 20,
               fontWeight: 'bold',
-              color: 'black',
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
             },
             titleStyle,
           ]}>
           {title}
         </Text>
         {children}
+        {showCloseButton && (
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              marginTop: 10,
+              backgroundColor:
+                colorScheme === 'dark' ? snazzyLight.cyan : dracula.cyan,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 10,
+              alignSelf: 'center',
+            }}>
+            <Text style={{color: 'white'}}>{t('Close')}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Modal>
   );

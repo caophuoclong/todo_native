@@ -2,10 +2,14 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import useAppContext from '~/hooks/useAppContext';
 import {useTranslation} from 'react-i18next';
+import {dracula, snazzyLight} from '../../../../../constants/color';
 
 export default function Greeting() {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   return (
     <View
       style={{
@@ -20,7 +24,10 @@ export default function Greeting() {
         <Text
           style={{
             fontSize: 20,
-            color: '#918F9B',
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
           }}>
           {t('Hello')},
         </Text>
@@ -28,7 +35,10 @@ export default function Greeting() {
           style={{
             fontSize: 36,
             fontWeight: 'bold',
-            color: '#221B3D',
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
           }}>
           {state.user.name}
         </Text>

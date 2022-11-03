@@ -4,6 +4,8 @@ import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import BottomSheet, {BottomSheetPropsRef} from '../BottomSheet';
 import {AppContext} from '../../context/index';
+import useAppContext from '~/hooks/useAppContext';
+import {dracula, snazzyLight} from '../../constants/color';
 interface Props {
   setShowBottomSheet: () => void;
 }
@@ -17,6 +19,10 @@ const MyTab: React.FC<BottomTabBarProps & Props> = ({
   const [isFocused, setIsFocous] = React.useState(false);
   const index = state.index;
   const route = state.routes[index];
+  const {state: contextState} = useAppContext();
+  const {
+    systemSetting: {colorScheme},
+  } = contextState;
   const onLongPress = () => {
     navigation.emit({
       type: 'tabLongPress',
@@ -45,7 +51,8 @@ const MyTab: React.FC<BottomTabBarProps & Props> = ({
         flexDirection: 'row',
         // height: 10,
         // borderWidth: 1,
-        backgroundColor: '#fff',
+        backgroundColor:
+          colorScheme === 'dark' ? dracula.background : snazzyLight.background,
       }}>
       <View
         style={{
@@ -61,7 +68,11 @@ const MyTab: React.FC<BottomTabBarProps & Props> = ({
           }}
           onLongPress={onLongPress}
           style={{}}>
-          <AntIcon name="home" size={32} color={'#5d43a6'} />
+          <AntIcon
+            name="home"
+            size={32}
+            color={colorScheme === 'dark' ? dracula.purple : snazzyLight.purple}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -69,7 +80,8 @@ const MyTab: React.FC<BottomTabBarProps & Props> = ({
             height: 40,
             padding: 5,
             borderRadius: 10,
-            backgroundColor: '#fe93a0',
+            backgroundColor:
+              colorScheme === 'dark' ? snazzyLight.pink : dracula.pink,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -82,7 +94,15 @@ const MyTab: React.FC<BottomTabBarProps & Props> = ({
             onPress('Setting');
           }}
           onLongPress={onLongPress}>
-          <AntIcon name="setting" size={32} color={'black'} />
+          <AntIcon
+            name="setting"
+            size={32}
+            color={
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground
+            }
+          />
         </TouchableOpacity>
       </View>
     </View>

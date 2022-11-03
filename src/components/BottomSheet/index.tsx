@@ -25,6 +25,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import useAppContext from '~/hooks/useAppContext';
+import {dracula, snazzyLight} from '../../constants/color';
 type BottomSheetProps = {
   maxHeight?: number;
   children?: React.ReactNode;
@@ -113,11 +114,23 @@ const BottomSheet = React.forwardRef<BottomSheetPropsRef, BottomSheetProps>(
         keyboardDidShowListener.remove();
       };
     }, []);
-
+    const {
+      systemSetting: {colorScheme},
+    } = state;
     return (
       <GestureDetector gesture={gesture}>
         <Animated.View
-          style={[style.bottomShetContainer, rBottomSheetStyle]}
+          style={[
+            style.bottomShetContainer,
+            rBottomSheetStyle,
+            {
+              backgroundColor:
+                colorScheme === 'dark'
+                  ? dracula.background
+                  : snazzyLight.background,
+              shadowColor: colorScheme === 'dark' ? '#fff' : '#000',
+            },
+          ]}
           children={
             <View
               style={{
@@ -148,13 +161,11 @@ const style = StyleSheet.create({
   bottomShetContainer: {
     height: SCREEN_HEIGHT,
     width: '100%',
-    backgroundColor: 'white',
     position: 'absolute',
     alignSelf: 'center',
     top: SCREEN_HEIGHT,
     borderRadius: 25,
     zIndex: 1000,
-    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 12,

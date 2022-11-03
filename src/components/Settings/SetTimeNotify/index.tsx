@@ -21,9 +21,14 @@ import {TaskType} from '~/interfaces';
 import useAppContext from '~/hooks/useAppContext';
 import {numberToOrd} from '../../../utils/numberToOrd';
 import {updateLevel} from '~/context/actions';
+import AppPressable from '~/components/AppPressable';
+import {dracula, snazzyLight} from '../../../constants/color';
 const SetTimeToNotify = () => {
   const {state, dispatch} = useAppContext();
   const {t} = useTranslation();
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   const [showModal, setShowModal] = useState(false);
   const [rotate, setRotate] = useState<Animated.Value[]>([]);
   const [showHide, setShowHide] = useState<Animated.Value[]>([]);
@@ -138,16 +143,10 @@ const SetTimeToNotify = () => {
   };
 
   return (
-    <Pressable
+    <AppPressable
       onPress={onPress}
-      style={({pressed}) => [
-        {
-          backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
-        },
-        CommonStyles.settingButton,
-      ]}>
-      <Icon name="timer" size={24} color="black" />
-      <Text style={CommonStyles.settingTitle}>{t('SetTimeToNotify')}</Text>
+      title={t('SetTimeToNotify')}
+      icon={<Icon name="timer" size={24} color="#FF5858" />}>
       <AppModal
         isVisible={showModal}
         onClose={() => {
@@ -170,11 +169,23 @@ const SetTimeToNotify = () => {
                     },
                   ],
                 }}>
-                <AntIcon name="caretright" size={16} />
+                <AntIcon
+                  name="caretright"
+                  size={16}
+                  color={
+                    colorScheme === 'dark'
+                      ? dracula.foreground
+                      : snazzyLight.foreground
+                  }
+                />
               </Animated.View>
               <Text
                 style={{
                   fontSize: 16,
+                  color:
+                    colorScheme === 'dark'
+                      ? dracula.foreground
+                      : snazzyLight.foreground,
                 }}>
                 {t(type.name)}
               </Text>
@@ -186,7 +197,10 @@ const SetTimeToNotify = () => {
                 }}>
                 <ScrollView
                   style={{
-                    backgroundColor: '#fff',
+                    backgroundColor:
+                      colorScheme === 'dark'
+                        ? dracula.white
+                        : snazzyLight.white,
                   }}>
                   {state.user.level[type.title].map((item, index) =>
                     index === state.user.level[type.title].length - 1 ? null : (
@@ -200,8 +214,12 @@ const SetTimeToNotify = () => {
                         <Text
                           style={{
                             fontSize: 16,
+                            color:
+                              colorScheme === 'dark'
+                                ? dracula.foreground
+                                : snazzyLight.foreground,
                           }}>
-                          {state.lan === 'vi'
+                          {state.systemSetting.lan === 'vi'
                             ? `Lần ${index + 1}`
                             : numberToOrd(index + 1)}
                         </Text>
@@ -235,7 +253,7 @@ const SetTimeToNotify = () => {
           </View>
         ))}
       </AppModal>
-    </Pressable>
+    </AppPressable>
   );
 };
 

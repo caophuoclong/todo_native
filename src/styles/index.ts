@@ -26,7 +26,6 @@ export const CommonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     //   color with gray sweet
-    borderColor: '#e0e0e0',
     borderLeftWidth: 0,
     borderRightWidth: 0,
     borderWidth: 1,
@@ -35,7 +34,6 @@ export const CommonStyles = StyleSheet.create({
   settingTitle:{
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
     marginLeft: 10
   }
 });

@@ -10,23 +10,32 @@ import Icon from 'react-native-vector-icons/Entypo';
 interface Props {
   value: boolean;
   onValueChange: (value: boolean) => void;
+  size?: number;
 }
-const CheckBox: React.FC<Props> = ({value, onValueChange}) => {
+const CheckBox: React.FC<Props> = ({value, onValueChange, size}) => {
   return (
     <TouchableOpacity
       onPress={() => {
         onValueChange(!value);
       }}
-      style={[style.container, value ? style.checked : style.uncheck]}>
-      {value && <Icon name="check" size={20} color="#fff" />}
+      style={[
+        style.container,
+        value ? style.checked : style.uncheck,
+        size
+          ? {width: size, height: size}
+          : {
+              width: 30,
+              height: 30,
+            },
+      ]}>
+      {value && (
+        <Icon name="check" size={size ? 0.5 * size : 20} color="#fff" />
+      )}
     </TouchableOpacity>
   );
 };
 const style = StyleSheet.create({
   container: {
-    width: 30,
-    height: 30,
-
     borderRadius: 1000,
     alignItems: 'center',
     justifyContent: 'center',

@@ -16,13 +16,21 @@ import notifee, {EventType} from '@notifee/react-native';
 import {checkExpired} from '~/utils/checkExpired';
 import {TitleFilter} from '../index';
 import {convertToDateTime} from '~/utils/convertToDateTime';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationParamsList} from '../../../../../interfaces/index';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {dracula, snazzyLight} from '../../../../../constants/color';
 type Props = {
   handleSetFilterSelected: (filtered: TitleFilter) => void;
 };
 export default function Tasks({handleSetFilterSelected}: Props) {
   const {t} = useTranslation();
   const {state, dispatch} = useAppContext();
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   const {tasksFiltered} = state;
+  const navigation = useNavigation<StackNavigationProp<NavigationParamsList>>();
   const onPressDelete = (_id: string) => {
     const task = tasksFiltered.find(x => x._id === _id);
     task?.backgroundId?.forEach(id => {
@@ -102,6 +110,7 @@ export default function Tasks({handleSetFilterSelected}: Props) {
         if (taskId) {
           const task = state.tasks.find(x => x._id === taskId);
           if (task) {
+            console.log(task);
             const date = task.start.date;
             const time = task.start.time;
             if (date && time) {
@@ -115,6 +124,7 @@ export default function Tasks({handleSetFilterSelected}: Props) {
               }
             }
             handleTaskPress(taskId);
+            navigation.navigate('Home');
           } else {
             return;
           }
@@ -129,7 +139,11 @@ export default function Tasks({handleSetFilterSelected}: Props) {
         handleSetDone(taskId, true);
       }
     });
-  }, []);
+    notifee.onBackgroundEvent(async ({type, detail}) => {
+      console.log('typeeee', type);
+      console.log('detailll', detail);
+    });
+  }, [state.tasks]);
 
   return (
     <View style={[tasksFiltered.length > 0 ? {flex: 5} : {flex: 0}]}>
@@ -146,7 +160,10 @@ export default function Tasks({handleSetFilterSelected}: Props) {
             style={{
               fontSize: 16,
               fontWeight: 'bold',
-              color: '#221B3D',
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
             }}>
             {t('Tasks')}
           </Text>

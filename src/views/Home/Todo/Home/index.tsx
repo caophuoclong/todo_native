@@ -31,6 +31,7 @@ import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {schedulerBackground} from '../../../../utils/schedulerBackground';
 import {setBackgroundId} from '../../../../context/actions/index';
 import {convertToDateTime} from '~/utils/convertToDateTime';
+import {dracula, snazzyLight} from '../../../../constants/color';
 
 interface Props {
   // showBottomSheet: boolean;
@@ -50,6 +51,9 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
     const {t} = useTranslation();
     const [filterSelected, setFilterSelected] = useState<TitleFilter>('myDay');
     const {state, dispatch} = useAppContext();
+    const {
+      systemSetting: {colorScheme},
+    } = state;
     const [tasksFiltered, setTasksFiltered] = useState<Array<Task>>([]);
     const [filter, setFilter] = useState<
       Array<{
@@ -144,7 +148,14 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
         await Database._storeData('user', JSON.stringify(state.user));
       })();
     }, [state.user]);
-
+    useEffect(() => {
+      (async () => {
+        await Database._storeData(
+          'systemSetting',
+          JSON.stringify(state.systemSetting),
+        );
+      })();
+    }, [state.systemSetting]);
     // useEffect(() => {
     //   (() => {
     //     const tasks = state.tasks;
@@ -203,7 +214,7 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
             {
               title: '<b>View task</b> &#128111;',
               pressAction: {
-                id: `viewTask_${'1667413906871'}`,
+                id: `viewTask_${'1667449372810'}`,
                 launchActivity: 'default',
               },
             },
@@ -245,7 +256,14 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
       setFilterSelected(title);
     };
     return (
-      <View style={{backgroundColor: '#fff', flex: 1}}>
+      <View
+        style={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? dracula.background
+              : snazzyLight.background,
+          flex: 1,
+        }}>
         {/* <Button
           title="Notify"
           onPress={() => {
@@ -270,12 +288,20 @@ const Home = React.forwardRef<BottomSheetPropsRef, Props>(
                 }}
                 style={[
                   style.btnFilter,
-                  filterSelected === f.title ? style.filterSelected : null,
+                  filterSelected === f.title
+                    ? {
+                        backgroundColor:
+                          colorScheme === 'dark'
+                            ? snazzyLight.purple
+                            : dracula.purple,
+                      }
+                    : null,
                 ]}>
                 <Text
                   style={[
                     filterSelected === f.title
                       ? {
+                          // white smoke
                           color: 'white',
                         }
                       : {

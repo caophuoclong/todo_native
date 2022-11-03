@@ -21,12 +21,16 @@ import BackgroundTimer from 'react-native-background-timer';
 import {schedulerBackground} from '~/utils/schedulerBackground';
 import moment from 'moment';
 import {convertToDateTime} from '~/utils/convertToDateTime';
+import {dracula, snazzyLight} from '../../constants/color';
 interface Props {
   task: TaskWithBackgroundId | null;
   onDeleteTask: (_id: string) => void;
 }
 const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
   const {state, dispatch} = useAppContext();
+  const {
+    systemSetting: {colorScheme},
+  } = state;
   const {t} = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const toggleSwitch = () => {
@@ -62,8 +66,19 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
   };
   if (task) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{task.title}</Text>
+      <View style={[styles.container]}>
+        <Text
+          style={[
+            styles.title,
+            {
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
+            },
+          ]}>
+          {task.title}
+        </Text>
         {/* Level */}
         <View
           style={[
@@ -78,13 +93,21 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
             ,
             {
               backgroundColor:
-                task.type.title === 'important'
-                  ? '#FF0000'
+                colorScheme !== 'dark'
+                  ? task.type.title === 'important'
+                    ? dracula.red
+                    : task.type.title === 'normal'
+                    ? // blue ocean
+                      dracula.cyan
+                    : //   else green
+                      dracula.green
+                  : task.type.title === 'important'
+                  ? snazzyLight.red
                   : task.type.title === 'normal'
                   ? // blue ocean
-                    '#00BFFF'
+                    snazzyLight.cyan
                   : //   else green
-                    '#008000',
+                    snazzyLight.green,
             },
           ]}>
           <Text
@@ -107,14 +130,18 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
               style={{
                 fontWeight: 'bold',
                 fontSize: 12,
-                color: '#221B3D',
+                color:
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground,
               }}>
               {t('Start')}
             </Text>
             <View
               style={{
                 flexDirection: 'row',
-                backgroundColor: '#e5e5e5',
+                backgroundColor:
+                  colorScheme === 'dark' ? dracula.white : snazzyLight.white,
                 padding: 10,
                 borderRadius: 10,
                 alignItems: 'center',
@@ -125,7 +152,10 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   marginLeft: 10,
                   fontSize: 14,
                   fontWeight: 'bold',
-                  color: 'black',
+                  color:
+                    colorScheme === 'dark'
+                      ? dracula.foreground
+                      : snazzyLight.foreground,
                 }}>{`${moment(task.start.date).format('DD-MM-YYYY')} - ${moment(
                 task.start.time,
               ).format('HH:mm')}`}</Text>
@@ -136,14 +166,18 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
               style={{
                 fontWeight: 'bold',
                 fontSize: 12,
-                color: '#221B3D',
+                color:
+                  colorScheme === 'dark'
+                    ? dracula.foreground
+                    : snazzyLight.foreground,
               }}>
               {t('End')}
             </Text>
             <View
               style={{
                 flexDirection: 'row',
-                backgroundColor: '#e5e5e5',
+                backgroundColor:
+                  colorScheme === 'dark' ? dracula.white : snazzyLight.white,
                 padding: 10,
                 borderRadius: 10,
                 alignItems: 'center',
@@ -154,7 +188,10 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
                   marginLeft: 10,
                   fontSize: 14,
                   fontWeight: 'bold',
-                  color: 'black',
+                  color:
+                    colorScheme === 'dark'
+                      ? dracula.foreground
+                      : snazzyLight.foreground,
                 }}>{`${moment(task.end.date).format('DD-MM-YYYY')} - ${moment(
                 task.end.time,
               ).format('HH:mm')}`}</Text>
@@ -167,7 +204,10 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
             style={{
               fontWeight: 'bold',
               fontSize: 12,
-              color: '#221B3D',
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
             }}>
             {t('Description')}
           </Text>
@@ -187,22 +227,11 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
           onClose={() => {
             setShowModal(false);
           }}
+          showCloseButton={true}
           title={t('Description')}>
           <ScrollView>
             <Text>{task.description}</Text>
           </ScrollView>
-          <TouchableOpacity
-            onPress={() => setShowModal(false)}
-            style={{
-              marginTop: 10,
-              backgroundColor: '#00BFFF',
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 5,
-              alignSelf: 'center',
-            }}>
-            <Text style={{color: 'white'}}>{t('Close')}</Text>
-          </TouchableOpacity>
         </AppModal>
         {/* Notify */}
         <View
@@ -214,7 +243,10 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
             style={{
               fontSize: 16,
               fontWeight: 'bold',
-              color: 'black',
+              color:
+                colorScheme === 'dark'
+                  ? dracula.foreground
+                  : snazzyLight.foreground,
             }}>
             {t('GetAlert')}
           </Text>
@@ -232,7 +264,8 @@ const DetailTask: React.FC<Props> = ({task, onDeleteTask}) => {
               onDeleteTask(task._id);
             }}
             style={{
-              backgroundColor: '#00BFFF',
+              backgroundColor:
+                colorScheme === 'dark' ? snazzyLight.cyan : dracula.cyan,
               padding: 20,
               borderRadius: 10,
             }}>

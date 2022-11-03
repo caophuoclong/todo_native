@@ -1,3 +1,5 @@
+import { ColorSchemeName } from "react-native"
+
 export type Language = "en" | "vi"
 export type NavigationParamsList ={
     Home: undefined,
@@ -6,7 +8,6 @@ export type NavigationParamsList ={
     Setting: undefined,
 }
 export type TabNavigationParamsList = {
-    Home1: undefined,
 
 }
 export type TaskType = {
@@ -48,4 +49,20 @@ export interface IUser {
 }
 export interface TaskWithBackgroundId extends Task{
   backgroundId?: number[]
+}
+export interface initialState {
+  active: boolean;
+  task: TaskWithBackgroundId;
+  tasks: Array<TaskWithBackgroundId>;
+  tasksFiltered: Array<TaskWithBackgroundId>;
+  taskCompleted: Array<TaskWithBackgroundId>;
+  user: IUser;
+  sortType: 'asc' | 'desc';
+  channelId: string;
+  systemSetting:{
+    colorScheme: ColorSchemeName,
+    baseOnSystem: boolean,
+    lan: Language
+  }
+
 }

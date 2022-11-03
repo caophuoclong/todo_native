@@ -12,6 +12,9 @@ import CheckBox from '~/components/CheckBox';
 import {setLan} from '~/context/actions';
 import Database from '~/utils/database';
 import {useTranslation} from 'react-i18next';
+import AppPressable from '~/components/AppPressable';
+import {dracula} from '~/constants/color';
+import {snazzyLight} from '../../../constants/color';
 interface LanguageProps {
   imgUri: string;
   name: string;
@@ -20,7 +23,9 @@ interface LanguageProps {
 }
 const Language = ({imgUri, name, onChoose, lan}: LanguageProps) => {
   const {
-    state: {lan: Lang},
+    state: {
+      systemSetting: {lan: Lang, colorScheme},
+    },
   } = useAppContext();
   const check = lan === Lang;
   const onChange = () => {
@@ -50,7 +55,10 @@ const Language = ({imgUri, name, onChoose, lan}: LanguageProps) => {
             marginLeft: 10,
             fontSize: 16,
             fontWeight: 'bold',
-            color: 'black',
+            color:
+              colorScheme === 'dark'
+                ? dracula.foreground
+                : snazzyLight.foreground,
           }}>
           {name}
         </Text>
@@ -63,34 +71,31 @@ const ChangeLanguge = () => {
   const {t, i18n} = useTranslation();
   const {state, dispatch} = useAppContext();
   const [showModal, setShowModal] = useState(false);
-  const {lan} = state;
+  const {
+    systemSetting: {lan},
+  } = state;
   const onChangeLanguage = async (lan: ILanguage) => {
     await Database._storeData('lan', lan);
     dispatch(setLan(lan));
     i18n.changeLanguage(lan);
   };
   return (
-    <Pressable
+    <AppPressable
+      title={t('ChangeLanguage')}
       onPress={() => {
         setShowModal(!showModal);
       }}
-      style={({pressed}) => [
-        {
-          backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
-        },
-        CommonStyles.settingButton,
-      ]}>
-      <Icon name="language" size={24} color="black" />
+      icon={<Icon name="language" size={24} color="green" />}>
       <View
         style={{
           flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={CommonStyles.settingTitle}>{t('ChangeLanguage')}</Text>
-        <Text>
+        {/* <Text style={CommonStyles.settingTitle}>{}</Text> */}
+        {/* <Text>
           {(lan === 'en' && 'English') || (lan === 'vi' && 'Tiếng việt')}
-        </Text>
+        </Text> */}
       </View>
       <AppModal
         isVisible={showModal}
@@ -111,7 +116,7 @@ const ChangeLanguge = () => {
           onChoose={onChangeLanguage}
         />
       </AppModal>
-    </Pressable>
+    </AppPressable>
   );
 };
 
